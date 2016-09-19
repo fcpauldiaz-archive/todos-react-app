@@ -17,6 +17,53 @@ const todoApp = combineReducers({
 
 const store = createStore(todoApp);
 
+const TodoContainer = ({visibleTodos}) => {
+  return (
+          <div 
+          class= {
+            'main-container'
+          }
+          >
+          {
+            visibleTodos.map(
+              (todo, i) => 
+              <div 
+                class = {
+                  'padding-div'
+                }
+                key= { i }
+              >
+                <input 
+                class ={ 
+                  'list-input'
+                }
+                style={
+                  {
+                    textDecoration: todo.completed ? 'line-through' : 'none'
+                  }
+                }
+                onClick={
+                () => { 
+                  store.dispatch({
+                    type: 'TOGGLE_TODO',
+                    payload: {
+                      id: todo.id
+                    }
+                  });
+                }
+              } 
+              key={ todo.id }
+              value={ todo.text}
+              />
+            </div>
+
+            )
+          }
+        </div>
+
+  );
+}
+
 const FilterLink = ({visibilityFilter, currentVisibilityFilter,children}) => {
   if (visibilityFilter === currentVisibilityFilter) {
     return <strong> { children } </strong>;
@@ -60,13 +107,81 @@ class TodosApp extends Component {
     let visibleTodos = getVisibleTodos(todos, visibilityFilter);
 
     return (
-      <div>
-        <input type="text" ref={ node => this.input = node } />
+      <div class="main-container">
+         <input 
+          placeholder={
+            'Title'
+          }
+          class={
+            'title-input-none'
+          }
+          ref="todo_title" 
+          />
+        <div 
+        class= {
+          'main-div'
+        }
+        >
+          <input 
+            class = {
+              'main-input'
+            }
+            placeholder = { 'Pending todo' }
+            onKeyPress={
+              (e) => { 
+               if (e.key === 'Enter') {
+                console.log(this);
+                console.log(this.input);
+                  store.dispatch({
+                    type: 'ADD_TODO',
+                    payload: {
+                      id: maxId++,
+                      text: this.input.value,
+                      title: this.refs.todo_title.value
+                    }
+                  });
+
+                  this.input.value = "";
+                }
+              }
+            }
+           ref={ node => this.input = node } 
+           onClick = {
+            (e) => {
+              this.refs.todo_title.className = 'title-input';
+              this.refs.button_save.className = '';
+            }
+           }
+          />
+          <i class= {
+            'glyphicon glyphicon-list cursor'
+          }
+          onClick= {
+            () => { 
+              console.log(todo_title.input.value)
+            }
+          }
+          ></i>
+          <i class = {
+            'glyphicon glyphicon-pencil cursor'
+          }
+          ></i>
+        </div>
+        <TodoContainer 
+          visibleTodos = { visibleTodos }
+          key= { 1 }
+          ></TodoContainer>
         <button
+          ref={
+            'button_save'
+          }
+          class={
+            'button-hidden'
+          }
           onClick={
             () => { 
               store.dispatch({
-                type: 'ADD_TODO',
+                type: 'SAVE_TODO',
                 payload: {
                   id: maxId++,
                   text: this.input.value
@@ -76,30 +191,7 @@ class TodosApp extends Component {
               this.input.value = "";
             }
           }
-        >Agregar Todo</button>
-      
-        <ul>
-          {
-            visibleTodos.map(
-              todo => <li
-              style={
-                {
-                  textDecoration: todo.completed ? 'line-through' : 'none'
-                }
-              }
-              onClick={
-              () => { 
-                store.dispatch({
-                  type: 'TOGGLE_TODO',
-                  payload: {
-                    id: todo.id
-                  }
-                });
-              }
-          } key={ todo.id }>{ todo.text }</li>
-            )
-          }
-        </ul>
+        >Save List of todos</button>
         <div>
          <FilterLink
             visibilityFilter="SHOW_ALL"

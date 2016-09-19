@@ -1,11 +1,67 @@
-$color: rgba(255,255,255, 0.6);
+$color: #F2F2F2;
 
-body{
-  background: $color;
-}
-.todo-completed {
-	text-decoration: line-through;
-}
 .button-completed {
 	font-weight: bold;
 }
+.button-hidden {
+	display: none;
+}
+body{
+	background: $color;
+	font-size: 18px;
+	font-family: "Roboto";
+}
+.cursor {
+	cursor: pointer;
+	padding-left: 10px;
+}
+.list-input {
+	width: 360px;
+	height: 30px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	border: none;
+	font-size: 18px;
+  	font-family: "Roboto";
+}
+
+.main-container {
+	text-align: -webkit-center;
+}
+.main-div {
+	width: 460px;
+	height: 40px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	border: none;
+	font-size: 18px;
+  	font-family: "Roboto";
+  	text-align: left;
+}
+.main-input {
+	width: 400px;
+	height: 40px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	border: none;
+	font-size: 18px;
+  	font-family: "Roboto";
+
+}
+.title-input-none {
+	display: none;
+}
+.title-input {
+	width: 460px;
+	height: 40px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	border: none;
+	font-size: 18px;
+  	font-family: "Roboto";
+}
+
+.todo-completed {
+	text-decoration: line-through;
+}
+
+.padding-div {
+	padding-top: 5px;
+}
+
