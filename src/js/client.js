@@ -33,7 +33,7 @@ const TodoContainer = ({visibleTodos}) => {
                 }
                 key= { i }
               >
-                <input 
+              <input 
                 class ={ 
                   'list-input'
                 }
@@ -108,6 +108,10 @@ class TodosApp extends Component {
 
     return (
       <div class="main-container">
+        <div class="search-bar">
+              <input type="search" class="search" placeholder="Search..." />
+              <a href="#" class="logo" title="GMRUI"></a>
+        </div>
          <input 
           placeholder={
             'Title'
@@ -130,8 +134,7 @@ class TodosApp extends Component {
             onKeyPress={
               (e) => { 
                if (e.key === 'Enter') {
-                console.log(this);
-                console.log(this.input);
+
                   store.dispatch({
                     type: 'ADD_TODO',
                     payload: {
@@ -149,7 +152,8 @@ class TodosApp extends Component {
            onClick = {
             (e) => {
               this.refs.todo_title.className = 'title-input';
-              this.refs.button_save.className = '';
+              this.refs.button_save.className = 'btn orange';
+              this.refs.text_filter.className = 'margin-none';
             }
            }
           />
@@ -158,7 +162,7 @@ class TodosApp extends Component {
           }
           onClick= {
             () => { 
-              console.log(todo_title.input.value)
+            
             }
           }
           ></i>
@@ -192,7 +196,13 @@ class TodosApp extends Component {
             }
           }
         >Save List of todos</button>
-        <div>
+        <div class = {
+          'margin-top'
+        }
+        ref={
+          'text_filter'
+        }
+        >
          <FilterLink
             visibilityFilter="SHOW_ALL"
             currentVisibilityFilter = { visibilityFilter }
