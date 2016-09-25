@@ -19,54 +19,47 @@ const store = createStore(todoApp);
 
 const TodoContainer = ({visibleTodos}) => {
   return (
-          <div 
-          class= {
-            'main-container'
-          }
+    <div 
+      class= { 'main-container' }
+    >
+    {
+    visibleTodos.map(
+      (todo, i) => 
+        <div 
+          class = { 'padding-div' }
+          key= { i }
           >
-          {
-            visibleTodos.map(
-              (todo, i) => 
-              <div 
-                class = {
-                  'padding-div'
-                }
-                key= { i }
-              >
-              <input 
-                class ={ 
-                  'list-input'
-                }
-                style={
-                  {
-                    textDecoration: todo.completed ? 'line-through' : 'none'
+          <input 
+            class ={ 'list-input' }
+            style={
+              {
+              textDecoration: todo.completed ? 'line-through' : 'none'
+              }
+            }
+            onClick={
+              () => { 
+                store.dispatch({
+                  type: 'TOGGLE_TODO',
+                  payload: {
+                    id: todo.id
                   }
-                }
-                onClick={
-                () => { 
-                  store.dispatch({
-                    type: 'TOGGLE_TODO',
-                    payload: {
-                      id: todo.id
-                    }
-                  });
-                }
-              } 
-              key={ todo.id }
-              value={ todo.text}
-              />
-            </div>
-
-            )
-          }
-        </div>
+                });
+              }
+            } 
+            key={ todo.id }
+            value={ todo.text}
+        />
+      </div>
+    )
+    }
+  </div>
 
   );
 }
 
 const FilterLink = ({visibilityFilter, currentVisibilityFilter,children}) => {
   if (visibilityFilter === currentVisibilityFilter) {
-    return <strong> { children } </strong>;
+  return <strong> { children } </strong>;
   }
 
   return <a
@@ -81,10 +74,11 @@ const FilterLink = ({visibilityFilter, currentVisibilityFilter,children}) => {
       }
     }
     >
-    { children }</a>
+  { children } </a>
 }
 
 const getVisibleTodos = (todos, visibilityFilter) => {
+  
   if (visibilityFilter === 'SHOW_ALL') {
     return todos;
   }
@@ -102,124 +96,110 @@ let maxId = 0;
 
 
 class TodosApp extends Component {
+
   render() {
-    let {todos, visibilityFilter} = this.props;
-    let visibleTodos = getVisibleTodos(todos, visibilityFilter);
 
-    return (
-      <div class="main-container">
-        <div class="search-bar">
-              <input type="search" class="search" placeholder="Search..." />
-              <a href="#" class="logo" title="GMRUI"></a>
-        </div>
-         <input 
-          placeholder={
-            'Title'
+  let { todos, visibilityFilter } = this.props;
+  let visibleTodos = getVisibleTodos(todos, visibilityFilter);
+
+  return (
+    <div class="main-container">
+    <div class="search-bar">
+      <input type="search" class="search" placeholder="Search..." />
+      <a href="#" class="logo" title="GMRUI"></a>
+    </div>
+    <input 
+      placeholder={
+        'Title'
+      }
+      class={ 'title-input-none' }
+      ref= { "todo_title" }
+    />
+    <div 
+      class= { 'main-div' }
+    >
+    <input 
+      class = { 'main-input' }
+      placeholder = { 'Pending todo' }
+      onKeyPress={
+        (e) => { 
+          if (e.key === 'Enter') {
+
+          store.dispatch({
+            type: 'ADD_TODO',
+            payload: {
+              id: maxId++,
+              text: this.input.value,
+              title: this.refs.todo_title.value
+            }
+          });
+
+          this.input.value = "";
           }
-          class={
-            'title-input-none'
-          }
-          ref="todo_title" 
-          />
-        <div 
-        class= {
-          'main-div'
         }
-        >
-          <input 
-            class = {
-              'main-input'
-            }
-            placeholder = { 'Pending todo' }
-            onKeyPress={
-              (e) => { 
-               if (e.key === 'Enter') {
-
-                  store.dispatch({
-                    type: 'ADD_TODO',
-                    payload: {
-                      id: maxId++,
-                      text: this.input.value,
-                      title: this.refs.todo_title.value
-                    }
-                  });
-
-                  this.input.value = "";
-                }
-              }
-            }
-           ref={ node => this.input = node } 
-           onClick = {
-            (e) => {
-              this.refs.todo_title.className = 'title-input';
-              this.refs.button_save.className = 'btn orange';
-              this.refs.text_filter.className = 'margin-none';
-            }
-           }
-          />
-          <i class= {
-            'glyphicon glyphicon-list cursor'
-          }
-          onClick= {
-            () => { 
-            
-            }
-          }
-          ></i>
-          <i class = {
-            'glyphicon glyphicon-pencil cursor'
-          }
-          ></i>
-        </div>
-        <TodoContainer 
-          visibleTodos = { visibleTodos }
-          key= { 1 }
-          ></TodoContainer>
-        <button
-          ref={
-            'button_save'
-          }
-          class={
-            'button-hidden'
-          }
-          onClick={
-            () => { 
-              store.dispatch({
-                type: 'SAVE_TODO',
-                payload: {
-                  id: maxId++,
-                  text: this.input.value
-                }
-              });
-
-              this.input.value = "";
-            }
-          }
-        >Save List of todos</button>
-        <div class = {
-          'margin-top'
+      }
+       ref={ node => this.input = node } 
+       onClick = {
+        (e) => {
+          this.refs.todo_title.className = 'title-input';
+          this.refs.button_save.className = 'btn orange';
+          this.refs.text_filter.className = 'margin-none';
         }
-        ref={
-          'text_filter'
+       }
+      />
+      <i 
+        class= { 'glyphicon glyphicon-list cursor' }
+        onClick= {
+          () => { 
+          
+          }
         }
-        >
-         <FilterLink
-            visibilityFilter="SHOW_ALL"
-            currentVisibilityFilter = { visibilityFilter }
-            >ALL</FilterLink>
-          {' '}
-          <FilterLink
-            visibilityFilter="SHOW_COMPLETED"
-            currentVisibilityFilter = { visibilityFilter }
-            >Completed</FilterLink>
-          {' '}
-          <FilterLink
-            visibilityFilter="SHOW_ACTIVE"
-            currentVisibilityFilter = { visibilityFilter }
-            >ACTIVE</FilterLink>        
-          </div>
+      ></i>
+      <i 
+        class = { 'glyphicon glyphicon-pencil cursor' }
+      ></i>
+    </div>
+    <TodoContainer 
+      visibleTodos = { visibleTodos }
+      key= { 1 }
+      ></TodoContainer>
+    <button
+      ref={ 'button_save' }
+      class={ 'button-hidden' }
+      onClick={
+        () => { 
+          store.dispatch({
+            type: 'SAVE_TODO',
+            payload: {
+              id: maxId++,
+              text: this.input.value
+            }
+          });
+          this.input.value = "";
+        }
+      }
+    >Save List of todos</button>
+    <div 
+      class = { 'margin-top' }
+      ref={ 'text_filter' }
+    >
+    <FilterLink
+      visibilityFilter="SHOW_ALL"
+      currentVisibilityFilter = { visibilityFilter }
+      >ALL</FilterLink>
+      {' '}
+      <FilterLink
+      visibilityFilter="SHOW_COMPLETED"
+      currentVisibilityFilter = { visibilityFilter }
+      >Completed</FilterLink>
+      {' '}
+      <FilterLink
+      visibilityFilter="SHOW_ACTIVE"
+      currentVisibilityFilter = { visibilityFilter }
+      >ACTIVE</FilterLink>        
       </div>
-    );
+    </div>
+  );
   }
 }
 
