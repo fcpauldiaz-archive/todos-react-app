@@ -7,12 +7,14 @@ import '../styles/index.scss';
 
 import { todos } from './reducers/todos';
 import { visibilityFilter } from './reducers/visibility';
+import { listTodos } from './reducers/listTodos';
 
 const { Component } = React;
 
 const todoApp = combineReducers({
   todos,
-  visibilityFilter
+  visibilityFilter,
+  listTodos
 });
 
 const store = createStore(todoApp);
@@ -99,7 +101,7 @@ class TodosApp extends Component {
 
   render() {
 
-  let { todos, visibilityFilter } = this.props;
+  let { todos, visibilityFilter, listTodos } = this.props;
   let visibleTodos = getVisibleTodos(todos, visibilityFilter);
 
   return (
@@ -130,7 +132,6 @@ class TodosApp extends Component {
             payload: {
               id: maxId++,
               text: this.input.value,
-              title: this.refs.todo_title.value
             }
           });
 
@@ -169,13 +170,18 @@ class TodosApp extends Component {
       onClick={
         () => { 
           store.dispatch({
-            type: 'SAVE_TODO',
+            type: 'ADD_LIST_TODO',
             payload: {
               id: maxId++,
-              text: this.input.value
+              title: this.refs.todo_title.value,
+              todos: todos
             }
           });
-          this.input.value = "";
+          store.dispatch({
+            type: 'DELETE_TODOS'
+          });
+          this.refs.todo_title.value = "";
+          todos = [];
         }
       }
     >Save List of todos</button>
@@ -206,6 +212,7 @@ class TodosApp extends Component {
 
 
 const render = () => {
+  console.log(store.getState());
   ReactDOM.render(
     <TodosApp
       { ...store.getState() }
