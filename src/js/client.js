@@ -21,7 +21,12 @@ const todoApp = combineReducers({
 
 const store = createStore(todoApp);
 
-const TodoContainer = ({visibleTodos}) => {
+class TodoContainer extends Component {
+
+  
+
+  render() {
+  let {visibleTodos} = this.props;
   return (
     <div 
       class= { 'main-container' }
@@ -34,6 +39,7 @@ const TodoContainer = ({visibleTodos}) => {
           key= { i }
           >
           <input 
+            ref = { 'edit_input' }
             class ={ 'list-input' }
             style={
               {
@@ -42,7 +48,7 @@ const TodoContainer = ({visibleTodos}) => {
             }
             onClick={
               () => { 
-                console.log(this);
+                console.log(this.refs.edit_input);
                 store.dispatch({
                   type: 'TOGGLE_TODO',
                   payload: {
@@ -51,6 +57,18 @@ const TodoContainer = ({visibleTodos}) => {
                 });
               }
             } 
+            onChange = {
+              () => {
+                console.log(this.refs.edit_input.value);
+                store.dispatch({
+                  type: 'EDIT_TODO',
+                  payload: {
+                    id: todo.id,
+                    text: this.refs.edit_input.value
+                  }
+                })
+              }
+            }
             key={ todo.id }
             defaultValue={ todo.text}
         />
@@ -60,6 +78,7 @@ const TodoContainer = ({visibleTodos}) => {
   </div>
 
   );
+  }
 }
 
 const FilterLink = ({visibilityFilter, currentVisibilityFilter,children}) => {
