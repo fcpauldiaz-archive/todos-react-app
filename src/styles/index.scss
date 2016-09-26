@@ -1,14 +1,13 @@
-$ligth-grey: #F2F2F2;
+@import 'mixins';
+
 $blue: #533687 ;
+$ligth-grey: #F2F2F2;
+$offset-circle: 100px;
 
 body {
   background: $ligth-grey;
   font-size: 18px;
   font-family: 'Roboto', sans-serif;
-}
-
-.button-hidden {
-  display: none;
 }
 
 .btn {
@@ -33,9 +32,43 @@ body {
   }
 }
 
+.circle-container {
+  position: relative;
+}
+
+.circle-black {
+  @include circle(20px, black);
+  right: $offset-circle - 20px;
+ 
+}
+
+$offset-circle: $offset-circle - 20px;
+.circle-blue {
+  @include circle(20px, blue);
+  right: $offset-circle - 20px;
+  
+}
+
+$offset-circle: $offset-circle - 20px;
+.circle-red {
+  @include circle(20px, red);
+  right: $offset-circle - 20px;
+  
+}
+
+$offset-circle: $offset-circle - 20px;
+.circle-orange {
+  @include circle(20px, orange);
+  right: $offset-circle - 20px;
+}
+
 .cursor {
   cursor: pointer;
   padding-left: 10px;
+}
+
+.list-container {
+  width: 500px;
 }
 
 .list-input {
@@ -46,10 +79,17 @@ body {
   width: 360px;
 }
 
+.hide-element {
+  display: none;
+}
+
 .main-container {
   text-align: -webkit-center;
 }
+
+
 .main-div {
+  background-color: darken($ligth-grey, 15%);
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 18px;
@@ -57,13 +97,13 @@ body {
   text-align: left;
   width: 460px;
 }
+
 .main-input {
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 18px;
   height: 40px;
-  width: 400px;
-
+  width: 360px;
 }
 
 .title-input-none {

@@ -12,6 +12,13 @@ const todo = (state = {}, action) => {
           completed: !state.completed
         };
       }
+    case 'EDIT_TODO':
+      if (state.id === action.payload.id){
+        return {
+          ...state,
+          text: action.payload.text
+        }
+      }
 
     default:
       return state;
@@ -19,7 +26,6 @@ const todo = (state = {}, action) => {
 }
 
 const todos = (state = [], action) => {
-  console.log(action);
   switch (action.type){
     case 'ADD_TODO':
       return [
@@ -30,6 +36,9 @@ const todos = (state = [], action) => {
     case 'TOGGLE_TODO':
       return state.map(t => todo(t, action));
 
+    case 'EDIT_TODO':
+      return state.map(t => todo(t, action));
+      
     case 'DELETE_TODOS':
       return [];
     default:
