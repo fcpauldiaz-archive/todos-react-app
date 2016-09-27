@@ -31,24 +31,24 @@ class SavedTodoListContainer extends Component {
     return (
         <div>
         {
-          listTodos.map((todo, i) =>
+          listTodos.map((list, i) =>
              <div 
               ref = { 'color_list' }
               class= { 'list-container' }
               style = {
                 {
-                  backgroundColor: todo.color
+                  backgroundColor: list.color
                 }
               }
               key = { i }
             >
               <input 
-                defaultValue = { todo.title }
+                defaultValue = { list.title }
                 class={ 'title-input' }
                 ref= { "todo_title" }
               />
               <TodoContainer 
-                visibleTodos = { todo.todos }
+                visibleTodos = { list.todos }
                 key= { 1 }
               ></TodoContainer>
               <div 
@@ -76,11 +76,27 @@ class SavedTodoListContainer extends Component {
                   >
                  <ColorContainer
                    refs = { this.refs }
-                   listTodo = { todo }
+                   listTodo = { list }
                  >
                  </ColorContainer>
                  </div>
-                  <div 
+                 <button
+                  ref={ 'button_save' }
+                  class={ 'btn orange' }
+                  onClick={
+                    () => { 
+                      store.dispatch({
+                        type: 'EDIT_LIST_TODO',
+                        payload: {
+                          id: list.id,
+                          title: this.refs.todo_title.value,
+                          todos: list.todos
+                        }
+                      });
+                    }
+                  }
+                >Update List of todos</button>
+                <div 
                     class = { 'margin-top' }
                     ref={ 'text_filter' }
                   >

@@ -6,10 +6,11 @@ const listTodo = (state = {}, action ) => {
         ...action.payload
       };    
     case 'EDIT_LIST_TODO':
+      console.log(state.id, action.payload.id);
       if (state.id === action.payload.id) {
       return {
         todos: action.payload.todos,
-        title: action.payload.text
+        title: action.payload.title
       }
     }
     case 'CHANGE_COLOR_LIST_TODO':
@@ -36,7 +37,7 @@ const listTodos = (state = [], action) => {
       return state.map(l => listTodo(l, action));
     case 'CHANGE_COLOR_LIST_TODO':
       return state.map(l => listTodo(l, action));
-    case 'DELTE_LIST_TODO':
+    case 'DELETE_LIST_TODO':
       return state.filter(l => l.id !== action.payload.id);
     default:
       return state;
