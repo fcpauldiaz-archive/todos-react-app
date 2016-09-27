@@ -3,6 +3,7 @@
 $blue: #533687 ;
 $ligth-grey: #F2F2F2;
 $offset-circle: 100px;
+$orange: #e67e22;
 
 body {
   background: $ligth-grey;
@@ -10,12 +11,13 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
+
 .btn {
   border-radius: 2px;
   border-width: 0;
   box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
   color: #ecf0f1;
-  display: block;
+  display: inline-block;
   margin-bottom: 10px;
   margin-top: 10px;
   outline: none;
@@ -25,7 +27,7 @@ body {
   position: relative;
   transition: background-color .3s;
   &.orange {
-    background-color: #e67e22;
+    background-color: $orange;
   }
   &.orange:hover, .orange:focus {
     background-color: #d35400;
@@ -76,7 +78,7 @@ $offset-circle: $offset-circle - 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 18px;
   height: 30px;
-  width: 360px;
+  width: 300px;
 }
 
 .hide-element {
