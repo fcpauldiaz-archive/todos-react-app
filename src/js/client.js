@@ -46,24 +46,11 @@ class TodoContainer extends Component {
               textDecoration: todo.completed ? 'line-through' : 'none'
               }
             }
-            onClick={
-              () => { 
-                console.log(this.refs.edit_input);
-                store.dispatch({
-                  type: 'TOGGLE_TODO',
-                  payload: {
-                    id: todo.id
-                  }
-                });
-              }
-            } 
             onChange = {
               () => {
-                console.log(this.refs.edit_input.value);
                 store.dispatch({
                   type: 'EDIT_TODO',
                   payload: {
-                    id: todo.id,
                     text: this.refs.edit_input.value
                   }
                 })
@@ -72,6 +59,23 @@ class TodoContainer extends Component {
             key={ todo.id }
             defaultValue={ todo.text}
         />
+        <button
+          class= { 'btn orange' }
+          onClick={
+            () => { 
+              store.dispatch({
+                type: 'TOGGLE_TODO',
+                payload: {
+                  id: todo.id
+                }
+              });
+            }
+          } 
+        >
+        <i
+          class = {  todo.completed ? 'glyphicon glyphicon-check' : 'glyphicon glyphicon-unchecked' }
+        ></i>
+        </button>
       </div>
     )
     }
