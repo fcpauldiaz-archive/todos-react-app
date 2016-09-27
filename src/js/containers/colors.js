@@ -1,5 +1,3 @@
-import React from 'react';
-const { Component } = React;
 
 const colors = [
   {
@@ -21,31 +19,5 @@ const colors = [
 ];
 
 
-class ColorContainer extends Component {
-  render () {
-    let { refs } = this.props;
 
-    return (
-      <div>
-      {
-      colors.map(
-        (color, i) => 
-          <div
-            key = { i }
-            class = { color.class }
-            onClick = {
-              () => {
-                refs.color_list.style.backgroundColor = color.div_color;
-              }
-            }
-          >
-          </div>
-      )
-      }
-      </div>
-    );
-  }
-}
-
-
-export { ColorContainer };
+export { colors };

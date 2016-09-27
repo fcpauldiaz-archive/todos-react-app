@@ -12,6 +12,13 @@ const listTodo = (state = {}, action ) => {
         title: action.payload.text
       }
     }
+    case 'CHANGE_COLOR_LIST_TODO':
+      if (state.id === action.payload.id) {
+        return {
+          ...state,
+          color: action.payload.color
+        }
+      }
     default:
       return state;
   }
@@ -26,6 +33,8 @@ const listTodos = (state = [], action) => {
         listTodo(undefined, action)
       ];
     case 'EDIT_LIST_TODO':
+      return state.map(l => listTodo(l, action));
+    case 'CHANGE_COLOR_LIST_TODO':
       return state.map(l => listTodo(l, action));
     case 'DELTE_LIST_TODO':
       return state.filter(l => l.id !== action.payload.id);

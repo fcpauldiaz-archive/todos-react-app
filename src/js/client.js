@@ -6,7 +6,7 @@ import expect from 'expect';
 import '../styles/index.scss';
 
 import { todos } from './reducers/todos';
-import { ColorContainer } from './containers/colors';
+import { colors } from './containers/colors';
 import { visibilityFilter } from './reducers/visibility';
 import { listTodos } from './reducers/listTodos';
 import { listNotes } from './reducers/notes';
@@ -76,9 +76,29 @@ class SavedTodoListContainer extends Component {
                   >
                  <ColorContainer
                    refs = { this.refs }
+                   listTodo = { todo }
                  >
                  </ColorContainer>
                  </div>
+                  <div 
+                    class = { 'margin-top' }
+                    ref={ 'text_filter' }
+                  >
+                  <FilterLink
+                    visibilityFilter="SHOW_ALL"
+                    currentVisibilityFilter = { visibilityFilter }
+                    >ALL</FilterLink>
+                    {' '}
+                    <FilterLink
+                    visibilityFilter="SHOW_COMPLETED"
+                    currentVisibilityFilter = { visibilityFilter }
+                    >Completed</FilterLink>
+                    {' '}
+                    <FilterLink
+                    visibilityFilter="SHOW_ACTIVE"
+                    currentVisibilityFilter = { visibilityFilter }
+                    >ACTIVE</FilterLink>        
+                  </div>
                 </div>
               </div>
              
@@ -153,6 +173,38 @@ class TodoContainer extends Component {
   }
 }
 
+class ColorContainer extends Component {
+  render () {
+    let { refs, listTodo } = this.props;
+
+    return (
+      <div>
+      {
+      colors.map(
+        (color, i) => 
+          <div
+            key = { i }
+            class = { color.class }
+            onClick = {
+              () => {
+                store.dispatch({
+                  type: 'CHANGE_COLOR_LIST_TODO',
+                  payload: {
+                    id: listTodo.id,
+                    color: color.div_color
+                  }
+                })
+              }
+            }
+          >
+          </div>
+      )
+      }
+      </div>
+    );
+  }
+}
+
 const FilterLink = ({visibilityFilter, currentVisibilityFilter,children}) => {
   if (visibilityFilter === currentVisibilityFilter) {
   return <strong> { children } </strong>;
@@ -191,7 +243,7 @@ const getVisibleTodos = (todos, visibilityFilter) => {
 class TodoListContainer extends Component {
   render() {
   
-  let {todos, visibleTodos, visibilityFilter } = this.props;
+  let {todos, visibleTodos, visibilityFilter, listTodo } = this.props;
   
   return (
     <div 
@@ -264,6 +316,7 @@ class TodoListContainer extends Component {
         >
          <ColorContainer
            refs = { this.refs }
+           listTodo = { listTodo }
          >
          </ColorContainer>
         </div>
@@ -296,25 +349,6 @@ class TodoListContainer extends Component {
           }
         }
       >Save List of todos</button>
-      <div 
-        class = { 'margin-top' }
-        ref={ 'text_filter' }
-      >
-      <FilterLink
-        visibilityFilter="SHOW_ALL"
-        currentVisibilityFilter = { visibilityFilter }
-        >ALL</FilterLink>
-        {' '}
-        <FilterLink
-        visibilityFilter="SHOW_COMPLETED"
-        currentVisibilityFilter = { visibilityFilter }
-        >Completed</FilterLink>
-        {' '}
-        <FilterLink
-        visibilityFilter="SHOW_ACTIVE"
-        currentVisibilityFilter = { visibilityFilter }
-        >ACTIVE</FilterLink>        
-      </div>
     </div>
 
   );
@@ -343,6 +377,7 @@ class TodosApp extends Component {
         visibleTodos = { visibleTodos }
         visibilityFilter = { visibilityFilter }
         todos = { todos }
+        listTodo = { listTodos }
       >
       </TodoListContainer>
       <SavedTodoListContainer
