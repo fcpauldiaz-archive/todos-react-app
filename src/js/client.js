@@ -6,6 +6,7 @@ import expect from 'expect';
 import '../styles/index.scss';
 
 import { todos } from './reducers/todos';
+import { ColorContainer } from './containers/colors';
 import { visibilityFilter } from './reducers/visibility';
 import { listTodos } from './reducers/listTodos';
 import { listNotes } from './reducers/notes';
@@ -21,9 +22,9 @@ const todoApp = combineReducers({
 
 const store = createStore(todoApp);
 
-class TodoContainer extends Component {
 
-  
+
+class TodoContainer extends Component {
 
   render() {
   let {visibleTodos} = this.props;
@@ -51,7 +52,8 @@ class TodoContainer extends Component {
                 store.dispatch({
                   type: 'EDIT_TODO',
                   payload: {
-                    text: this.refs.edit_input.value
+                    text: this.refs.edit_input.value,
+                    id: todo.id
                   }
                 })
               }
@@ -109,14 +111,13 @@ const FilterLink = ({visibilityFilter, currentVisibilityFilter,children}) => {
 
 const getVisibleTodos = (todos, visibilityFilter) => {
   
-  if (visibilityFilter === 'SHOW_ALL') {
-    return todos;
-  }
-  if (visibilityFilter === 'SHOW_COMPLETED') {
-    return todos.filter(t => t.completed);
-  }
-  if (visibilityFilter === 'SHOW_ACTIVE') {
-    return todos.filter(t => !t.completed);
+  switch(visibilityFilter) {
+    case 'SHOW_ALL': 
+      return todos;
+    case 'SHOW_COMPLETED':
+      return todos.filter(t => t.completed);
+    case 'SHOW_ACTIVE':
+      return todos.filter(t => !t.completed);
   }
 }
 
@@ -195,44 +196,10 @@ class TodoListContainer extends Component {
           'hide-element'
         }
         >
-          <div
-          class = { 'circle-black' }
-          onClick = {
-            () => {
-            
-            }
-          }
-          >
-          </div>
-          <div
-          class = { 'circle-blue' }
-          onClick = {
-            () => {
-              this.refs.color_list.style.backgroundColor = 'blue';
-              
-            }
-          }
-          >
-          </div>
-           <div
-          class = { 'circle-red' }
-          onClick = {
-            () => {
-              this.refs.color_list.style.backgroundColor = 'red';
-             
-            }
-          }
-          >
-          </div> <div
-          class = { 'circle-orange' }
-          onClick = {
-            () => {
-              this.refs.color_list.style.backgroundColor = 'orange';
-            
-            }
-          }
-          >
-          </div>
+         <ColorContainer
+           refs = { this.refs }
+         >
+         </ColorContainer>
         </div>
        
       </div>
