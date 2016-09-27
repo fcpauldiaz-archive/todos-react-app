@@ -25,8 +25,6 @@ const store = createStore(todoApp);
 class SavedTodoListContainer extends Component {
   render() {
     let { listTodos } = this.props;
-    console.log('notas');
-    console.log(listTodos);
     if (typeof listTodos === 'undefined') {
       listTodos = [];
     }
@@ -37,6 +35,11 @@ class SavedTodoListContainer extends Component {
              <div 
               ref = { 'color_list' }
               class= { 'list-container' }
+              style = {
+                {
+                  backgroundColor: todo.color
+                }
+              }
               key = { i }
             >
               <input 
@@ -49,7 +52,7 @@ class SavedTodoListContainer extends Component {
                 key= { 1 }
               ></TodoContainer>
               <div 
-                class= { 'main-div' }
+                class= { 'edit-div' }
               >
                 <i 
                   class = { 'glyphicon glyphicon-pencil cursor-edit' }
