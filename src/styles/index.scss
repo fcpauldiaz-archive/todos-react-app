@@ -66,6 +66,11 @@ $offset-circle: $offset-circle - 20px;
   cursor: pointer;
   padding-left: 10px;
 }
+.cursor-edit {
+  cursor: pointer;
+  float: right;
+  padding-left: 10px;
+}
 
 .list-container {
   width: 500px;

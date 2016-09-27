@@ -22,6 +22,69 @@ const todoApp = combineReducers({
 
 const store = createStore(todoApp);
 
+class SavedTodoListContainer extends Component {
+  render() {
+    let { listTodos } = this.props;
+    console.log('notas');
+    console.log(listTodos);
+    if (typeof listTodos === 'undefined') {
+      listTodos = [];
+    }
+    return (
+        <div>
+        {
+          listTodos.map((todo, i) =>
+             <div 
+              ref = { 'color_list' }
+              class= { 'list-container' }
+              key = { i }
+            >
+              <input 
+                defaultValue = { todo.title }
+                class={ 'title-input' }
+                ref= { "todo_title" }
+              />
+              <TodoContainer 
+                visibleTodos = { todo.todos }
+                key= { 1 }
+              ></TodoContainer>
+              <div 
+                class= { 'main-div' }
+              >
+                <i 
+                  class = { 'glyphicon glyphicon-pencil cursor-edit' }
+                  onClick = { 
+                    () => {
+
+                      if (this.refs.color.className == 'hide-element') {
+                        this.refs.color.className = 'circle-container'
+                      }
+                      else {
+                        this.refs.color.className = 'hide-element'
+                      }
+                      }
+                    }
+                ></i>
+                <div 
+                  ref = { 'color' }
+                  class = {
+                    'hide-element'
+                  }
+                  >
+                 <ColorContainer
+                   refs = { this.refs }
+                 >
+                 </ColorContainer>
+                 </div>
+                </div>
+              </div>
+             
+          )
+        }
+        </div>
+      );
+  }
+}
 
 
 class TodoContainer extends Component {
@@ -279,6 +342,10 @@ class TodosApp extends Component {
         todos = { todos }
       >
       </TodoListContainer>
+      <SavedTodoListContainer
+        listTodos = { listTodos }
+      >
+      </SavedTodoListContainer>
     </div>
   );
   }

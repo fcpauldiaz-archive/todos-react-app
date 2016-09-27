@@ -1,6 +1,11 @@
 import React from 'react';
 
-const TodoContainer = ({visibleTodos, onClick}) => {
+class TodoContainer extends Component {
+
+  
+
+  render() {
+  let { visibleTodos, onClick, onChange} = this.props;
   return (
     <div 
       class= { 'main-container' }
@@ -13,22 +18,26 @@ const TodoContainer = ({visibleTodos, onClick}) => {
           key= { i }
           >
           <input 
+            ref = { 'edit_input' }
             class ={ 'list-input' }
             style={
               {
               textDecoration: todo.completed ? 'line-through' : 'none'
               }
             }
-            onClick={ onClick } 
+            onClick={
+              onClick
+            } 
+            onChange = {
+              onChange
+            }
             key={ todo.id }
             defaultValue={ todo.text}
-        />
       </div>
     )
     }
   </div>
 
   );
+  }
 }
-
-export { TodoContainer };

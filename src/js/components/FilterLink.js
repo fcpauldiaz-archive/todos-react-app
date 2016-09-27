@@ -4,8 +4,8 @@ const FilterLink =
   ({
     visibilityFilter, 
     currentVisibilityFilter, 
-    children,
-    onClick 
+    onClick,
+    children
   }) => {
   if (visibilityFilter === currentVisibilityFilter) {
   return <strong> { children } </strong>;
