@@ -4,6 +4,9 @@ $blue: #533687 ;
 $ligth-grey: #F2F2F2;
 $offset-circle: 100px;
 $orange: #e67e22;
+$green: #0f9d58;
+$red: #e74c3c;
+$darker-red: #c0392b;
 
 body {
   background: $ligth-grey;
@@ -26,10 +29,25 @@ body {
   transition: background-color .3s;
   &.orange {
     background-color: $orange;
+    &:hover, &:focus {
+      background-color: #d35400;
+    }
   }
-  &.orange:hover, .orange:focus {
-    background-color: #d35400;
+  &.green {
+    background-color: $green;
+    &:hover, &:focus {
+      background-color: darken($green, 10%);
+    }
   }
+  &.red {
+    background-color: $red;
+    &:hover, &:focus {
+      background-color: $darker-red;
+    }
+  }
+
+
+
 }
 
 .circle-container {
@@ -82,7 +100,7 @@ $offset-circle: $offset-circle - 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 18px;
   height: 30px;
-  width: 420px;
+  width: 380px;
 }
 
 .hide-element {

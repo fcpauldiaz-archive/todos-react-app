@@ -24,10 +24,12 @@ const store = createStore(todoApp);
 
 class SavedTodoListContainer extends Component {
   render() {
-    let { listTodos } = this.props;
+    let { listTodos, visibleTodos } = this.props;
     if (typeof listTodos === 'undefined') {
       listTodos = [];
     }
+    console.log('test');  
+    console.log(listTodos);
     return (
         <div>
         {
@@ -48,7 +50,7 @@ class SavedTodoListContainer extends Component {
                 ref= { "todo_title" }
               />
               <TodoContainer 
-                visibleTodos = { list.todos }
+                visibleTodos = { getNewTodos(visibleTodos, list.id) }
                 key= { 1 }
               ></TodoContainer>
               <div 
@@ -130,6 +132,7 @@ class TodoContainer extends Component {
 
   render() {
   let {visibleTodos} = this.props;
+
   return (
     <div 
       class= { 'main-container' }
@@ -141,6 +144,23 @@ class TodoContainer extends Component {
           class = { 'padding-div' }
           key= { i }
           >
+         <button
+          class= { 'btn orange' }
+          onClick={
+            () => { 
+              store.dispatch({
+                type: 'TOGGLE_TODO',
+                payload: {
+                  id: todo.id
+                }
+              });
+            }
+          } 
+        >
+        <i
+          class = {  todo.completed ? 'glyphicon glyphicon-check' : 'glyphicon glyphicon-unchecked' }
+        ></i>
+        </button>
           <input 
             ref = { 'edit_input' }
             class ={ 'list-input' }
@@ -164,11 +184,11 @@ class TodoContainer extends Component {
             defaultValue={ todo.text}
         />
         <button
-          class= { 'btn orange' }
+          class= { 'btn red' }
           onClick={
             () => { 
               store.dispatch({
-                type: 'TOGGLE_TODO',
+                type: 'DELETE_TODO',
                 payload: {
                   id: todo.id
                 }
@@ -177,7 +197,7 @@ class TodoContainer extends Component {
           } 
         >
         <i
-          class = {  todo.completed ? 'glyphicon glyphicon-check' : 'glyphicon glyphicon-unchecked' }
+          class = {   'glyphicon glyphicon-remove'  }
         ></i>
         </button>
       </div>
@@ -255,6 +275,14 @@ const getVisibleTodos = (todos, visibilityFilter) => {
   }
 }
 
+const getNewTodos = (visibleTodos, idList)  => {
+  console.log('visible todos');
+  console.log(visibleTodos);
+  console.log(idList);
+  console.log(visibleTodos.filter(v => v.idList === idList));
+  return visibleTodos.filter(v => v.idList === idList);
+}
+
 
 class TodoListContainer extends Component {
   render() {
@@ -288,6 +316,7 @@ class TodoListContainer extends Component {
               payload: {
                 id: maxId++,
                 text: this.input.value,
+                idList: idLists
               }
             });
 
@@ -339,7 +368,7 @@ class TodoListContainer extends Component {
        
       </div>
       <TodoContainer 
-        visibleTodos = { visibleTodos }
+        visibleTodos = { getNewTodos(visibleTodos, idLists) }
         key= { 1 }
         ></TodoContainer>
       <button
@@ -350,15 +379,15 @@ class TodoListContainer extends Component {
             store.dispatch({
               type: 'ADD_LIST_TODO',
               payload: {
-                id: maxId++,
+                id: idLists++,
                 color: this.refs.color_list.style.backgroundColor,
                 title: this.refs.todo_title.value,
-                todos: todos
+                todos: visibleTodos.map(t => t.id)
               }
             });
-            store.dispatch({
-              type: 'DELETE_TODOS'
-            });
+            console.log('visibleTodos');
+            console.log(visibleTodos);
+             
             this.refs.color_list.style.backgroundColor = '';
             this.refs.todo_title.value = '';
             
@@ -374,7 +403,7 @@ class TodoListContainer extends Component {
 
 
 let maxId = 0;
-
+let idLists = 0;
 
 class TodosApp extends Component {
 
@@ -398,6 +427,7 @@ class TodosApp extends Component {
       </TodoListContainer>
       <SavedTodoListContainer
         listTodos = { listTodos }
+        visibleTodos = { visibleTodos }
       >
       </SavedTodoListContainer>
     </div>

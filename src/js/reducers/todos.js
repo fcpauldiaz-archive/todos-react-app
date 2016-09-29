@@ -12,6 +12,13 @@ const todo = (state = {}, action) => {
           completed: !state.completed
         };
       }
+    case 'SAVE_TODO':
+      if (state.id === action.payload.id) {
+        return {
+          ...state,
+          saved: true
+        }
+      }
     case 'EDIT_TODO':
       if (state.id === action.payload.id){
         return {
@@ -32,15 +39,14 @@ const todos = (state = [], action) => {
         ...state,
         todo(undefined, action)
       ];
-
     case 'TOGGLE_TODO':
       return state.map(t => todo(t, action));
-
+    case 'SAVE_TODO':
+      return state.map(t => todo(t, action));
     case 'EDIT_TODO':
       return state.map(t => todo(t, action));
-      
-    case 'DELETE_TODOS':
-      return [];
+    case 'DELETE_TODO':
+      return state.filter(t => t.id !== action.payload.id);
     default:
       return state;
   }

@@ -1,4 +1,5 @@
-//single version
+import { todos } from './todos';
+//ersion
 const listTodo = (state = {}, action ) => {
   switch(action.type) {
     case 'ADD_LIST_TODO':
@@ -28,6 +29,8 @@ const listTodo = (state = {}, action ) => {
 //array version
 const listTodos = (state = [], action) => {
   switch (action.type) {
+    case 'ADD_TODO_':
+      return todos(undefined, action);
     case 'ADD_LIST_TODO':
       return [
         ...state,
