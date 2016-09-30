@@ -10,7 +10,7 @@ const listTodo = (state = {}, action ) => {
       console.log(state.id, action.payload.id);
       if (state.id === action.payload.id) {
       return {
-        todos: action.payload.todos,
+        ...state,
         title: action.payload.title
       }
     }

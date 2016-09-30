@@ -29,28 +29,32 @@ body {
   position: relative;
   transition: background-color .3s;
   &.size {
-    width: 31%;
+    width: 38%;
   }
 
   &.orange {
+    color: white;
     background-color: $orange;
     &:hover, &:focus {
       background-color: #d35400;
     }
   }
   &.green {
+    color: white;
     background-color: $green;
     &:hover, &:focus {
       background-color: darken($green, 10%);
     }
   }
   &.red {
+    color: white;
     background-color: $red;
     &:hover, &:focus {
       background-color: $darker-red;
     }
   }
   &.blue {
+    color: white;
     background-color: $blue;
     &:hover, &:focus {
       background-color: darken($blue, 20%);
@@ -137,7 +141,6 @@ $offset-circle: $offset-circle - 20px;
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 18px;
-  height: 25px;
   padding-top: 3px;
   padding-right: 10px;
   text-align: left;
@@ -168,7 +171,8 @@ $offset-circle: $offset-circle - 20px;
   text-decoration: line-through;
 }
 
-.padding-div {
+.padding-right {
+  padding-right: 10px;
 }
 
 .margin-top {

@@ -48,6 +48,17 @@ class SavedTodoListContainer extends Component {
                 defaultValue = { list.title }
                 class={ 'title-input' }
                 ref= { "todo_title" }
+                onChange={
+                    () => { 
+                      store.dispatch({
+                        type: 'EDIT_LIST_TODO',
+                        payload: {
+                          id: list.id,
+                          title: this.refs.todo_title.value,
+                        }
+                      });
+                    }
+                  }
               />
               <TodoContainer 
                 visibleTodos = { getNewTodos(visibleTodos, list.id) }
@@ -82,22 +93,6 @@ class SavedTodoListContainer extends Component {
                  >
                  </ColorContainer>
                  </div>
-                 <button
-                  ref={ 'button_save' }
-                  class={ 'btn orange size' }
-                  onClick={
-                    () => { 
-                      store.dispatch({
-                        type: 'EDIT_LIST_TODO',
-                        payload: {
-                          id: list.id,
-                          title: this.refs.todo_title.value,
-                          todos: list.todos
-                        }
-                      });
-                    }
-                  }
-                >Update</button>
                 <button
                   class={ 'btn blue size' }
                   onClick={
@@ -110,7 +105,11 @@ class SavedTodoListContainer extends Component {
                       });
                     }
                   }
-                >Archive </button>
+                >  
+                <span 
+                  class= { 'glyphicon glyphicon-floppy-disk padding-right' }
+                >
+               </span>Archive </button>
                 <button
                   class={ 'btn red size' }
                   onClick={
@@ -123,7 +122,13 @@ class SavedTodoListContainer extends Component {
                       });
                     }
                   }
-                >Delete </button>
+                >
+                <span 
+                  class= { 'glyphicon glyphicon-floppy-remove padding-right' }
+                >
+               </span>
+                 Delete
+                </button>
                 
                 <div 
                     class = { 'margin-top' }
@@ -185,7 +190,7 @@ class TodoContainer extends Component {
           } 
         >
         <i
-          class = {  todo.completed ? 'glyphicon glyphicon-check' : 'glyphicon glyphicon-unchecked' }
+          class = {  todo.completed ? 'glyphicon glyphicon-ok' : 'glyphicon glyphicon-unchecked' }
         ></i>
         </button>
           <input 
