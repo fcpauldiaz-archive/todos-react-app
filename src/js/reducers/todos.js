@@ -3,7 +3,7 @@ const todo = (state = {}, action) => {
     case 'ADD_TODO':
       return {
         ...action.payload,
-        completed: false
+        completed: false,
       };
     case 'TOGGLE_TODO':
       if(state.id === action.payload.id){

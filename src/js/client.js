@@ -84,7 +84,7 @@ class SavedTodoListContainer extends Component {
                  </div>
                  <button
                   ref={ 'button_save' }
-                  class={ 'btn orange' }
+                  class={ 'btn orange size' }
                   onClick={
                     () => { 
                       store.dispatch({
@@ -97,7 +97,34 @@ class SavedTodoListContainer extends Component {
                       });
                     }
                   }
-                >Update List of todos</button>
+                >Update</button>
+                <button
+                  class={ 'btn blue size' }
+                  onClick={
+                    () => { 
+                      store.dispatch({
+                        type: 'ARCHIVE_LIST_TODO',
+                        payload: {
+                          id: list.id
+                        }
+                      });
+                    }
+                  }
+                >Archive </button>
+                <button
+                  class={ 'btn red size' }
+                  onClick={
+                    () => { 
+                      store.dispatch({
+                        type: 'DELETE_LIST_TODO',
+                        payload: {
+                          id: list.id
+                        }
+                      });
+                    }
+                  }
+                >Delete </button>
+                
                 <div 
                     class = { 'margin-top' }
                     ref={ 'text_filter' }
@@ -276,10 +303,6 @@ const getVisibleTodos = (todos, visibilityFilter) => {
 }
 
 const getNewTodos = (visibleTodos, idList)  => {
-  console.log('visible todos');
-  console.log(visibleTodos);
-  console.log(idList);
-  console.log(visibleTodos.filter(v => v.idList === idList));
   return visibleTodos.filter(v => v.idList === idList);
 }
 
@@ -329,7 +352,6 @@ class TodoListContainer extends Component {
           (e) => {
             this.refs.todo_title.className = 'title-input';
             this.refs.button_save.className = 'btn orange';
-            this.refs.text_filter.className = 'margin-none';
           }
          }
         />
@@ -411,7 +433,7 @@ class TodosApp extends Component {
 
   let { todos, visibilityFilter, listTodos } = this.props;
   let visibleTodos = getVisibleTodos(todos, visibilityFilter);
-
+  let visibleListTodos = listTodos.filter(l => l.archived === false);
   return (
     <div class="main-container">
       <div class="search-bar">
@@ -422,11 +444,11 @@ class TodosApp extends Component {
         visibleTodos = { visibleTodos }
         visibilityFilter = { visibilityFilter }
         todos = { todos }
-        listTodo = { listTodos }
+        listTodo = { visibleListTodos }
       >
       </TodoListContainer>
       <SavedTodoListContainer
-        listTodos = { listTodos }
+        listTodos = { visibleListTodos }
         visibleTodos = { visibleTodos }
       >
       </SavedTodoListContainer>

@@ -1,10 +1,10 @@
-import { todos } from './todos';
-//ersion
+
 const listTodo = (state = {}, action ) => {
   switch(action.type) {
     case 'ADD_LIST_TODO':
       return {
-        ...action.payload
+        ...action.payload,
+        archived: false
       };    
     case 'EDIT_LIST_TODO':
       console.log(state.id, action.payload.id);
@@ -21,6 +21,13 @@ const listTodo = (state = {}, action ) => {
           color: action.payload.color
         }
       }
+    case 'ARCHIVE_LIST_TODO':
+      if (state.id === action.payload.id) {
+        return {
+          ...state,
+          archived: true
+        }
+      }
     default:
       return state;
   }
@@ -29,8 +36,6 @@ const listTodo = (state = {}, action ) => {
 //array version
 const listTodos = (state = [], action) => {
   switch (action.type) {
-    case 'ADD_TODO_':
-      return todos(undefined, action);
     case 'ADD_LIST_TODO':
       return [
         ...state,
@@ -42,6 +47,8 @@ const listTodos = (state = [], action) => {
       return state.map(l => listTodo(l, action));
     case 'DELETE_LIST_TODO':
       return state.filter(l => l.id !== action.payload.id);
+    case 'ARCHIVE_LIST_TODO':
+      return state.map(l => listTodo(l, action));
     default:
       return state;
   }
