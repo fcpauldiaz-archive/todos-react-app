@@ -4,7 +4,8 @@ const todo = (state = {}, action) => {
       return {
         ...action.payload,
         completed: false,
-        saved: false
+        saved: false,
+        archived: false
       };
     case 'TOGGLE_TODO':
       if(state.id === action.payload.id){
@@ -27,6 +28,13 @@ const todo = (state = {}, action) => {
           text: action.payload.text
         }
       }
+    case 'ARCHIVE_TODO':
+      if (state.id === action.payload.id) {
+        return {
+          ...state,
+          archived: true
+        }
+      }
     default:
       return state;
   }
@@ -47,6 +55,8 @@ const todos = (state = [], action) => {
       return state.map(t => todo(t, action));
     case 'DELETE_TODO':
       return state.filter(t => t.id !== action.payload.id);
+    case 'ARCHIVE_TODO':
+      return state.map(t => todo(t,action));
     default:
       return state;
   }

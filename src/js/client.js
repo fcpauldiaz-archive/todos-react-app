@@ -127,6 +127,12 @@ class SavedTodoListContainer extends Component {
                           id: list.id
                         }
                       });
+                      list.todos.map(id =>
+                        store.dispatch({
+                          type: 'ARCHIVE_TODO',
+                          payload: { id }
+                        })
+                      );
                     }
                   }
                 >  
@@ -144,6 +150,14 @@ class SavedTodoListContainer extends Component {
                           id: list.id
                         }
                       });
+                      list.todos.map(id => 
+                        store.dispatch({
+                          type: 'DELETE_TODO',
+                          payload: {
+                            id
+                          }
+                        })
+                      )
                     }
                   }
                 >
@@ -324,8 +338,6 @@ const FilterLink = ({visibilityFilter, currentVisibilityFilter,children, idList}
 }
 
 const getTodosInList = (todos, listTodo) => {
-  console.log(listTodo);
-  console.log('alksjdfljaldsf');
   if (listTodo.length === 0) {
     return todos;
   }
@@ -333,7 +345,6 @@ const getTodosInList = (todos, listTodo) => {
   let array = [];
   for (let todos of listTodo) { array = array.concat(todos.todos) }
   let returnValue = todos.filter(t => !array.includes(t.id));
-  console.log(returnValue);
   return returnValue;
 }
 
@@ -359,6 +370,10 @@ const getNewTodos = (todos, listTodo)  => {
     return listTodo.todos.map((idList) => todos.filter(v => v.id === idList)[0]).filter(f => f !== undefined);
   }
   return todos;
+}
+
+const getUnArchived = (todos) => {
+  return todos.filter (t => t.archived === false);
 }
 
 class TodoListContainer extends Component {
@@ -459,7 +474,7 @@ class TodoListContainer extends Component {
                 id: v4(),
                 color: this.refs.color_list.style.backgroundColor,
                 title: this.refs.todo_title.value,
-                todos: getTodosInList(todos, listTodo).map(t => t.id)
+                todos: getTodosInList(getUnArchived(todos), listTodo).map(t => t.id)
               }
             });
             todos.map(t => {
