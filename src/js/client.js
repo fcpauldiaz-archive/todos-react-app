@@ -387,17 +387,42 @@ class TodoListContainer extends Component {
     >
       <input 
         placeholder={
-          'Title'
+          'Title: Enter to save'
         }
         class={ 'title-input-none' }
         ref= { "todo_title" }
+        onKeyPress = {
+          (e) => {
+            if (e.key === 'Enter') {
+                store.dispatch({
+              type: 'ADD_LIST_TODO',
+              payload: {
+                id: v4(),
+                color: this.refs.color_list.style.backgroundColor,
+                title: this.refs.todo_title.value,
+                todos: getTodosInList(getUnArchived(todos), listTodo).map(t => t.id)
+              }
+            });
+            todos.map(t => {
+              store.dispatch({
+                type: 'SAVE_TODO',
+                payload: {
+                  id: t.id
+                }
+              })
+            });
+            this.refs.color_list.style.backgroundColor = '';
+            this.refs.todo_title.value = '';
+            }
+          }
+        }
       />
       <div 
         class= { 'main-div' }
       >
       <input 
         class = { 'main-input' }
-        placeholder = { 'Pending todo' }
+        placeholder = { 'Pending todo: Enter to save' }
         onKeyPress={
           (e) => { 
             if (e.key === 'Enter') {
