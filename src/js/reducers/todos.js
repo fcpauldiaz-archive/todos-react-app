@@ -26,7 +26,6 @@ const todo = (state = {}, action) => {
           text: action.payload.text
         }
       }
-
     default:
       return state;
   }

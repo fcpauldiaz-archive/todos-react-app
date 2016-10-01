@@ -7,7 +7,6 @@ import '../styles/index.scss';
 
 import { todos } from './reducers/todos';
 import { colors } from './containers/colors';
-import { visibilityFilter } from './reducers/visibility';
 import { listTodos } from './reducers/listTodos';
 import { listNotes } from './reducers/notes';
 
@@ -15,7 +14,6 @@ const { Component } = React;
 
 const todoApp = combineReducers({
   todos,
-  visibilityFilter,
   listTodos,
   listNotes
 });
@@ -24,12 +22,10 @@ const store = createStore(todoApp);
 
 class SavedTodoListContainer extends Component {
   render() {
-    let { listTodos, visibleTodos } = this.props;
+    let { todos, listTodos, } = this.props;
     if (typeof listTodos === 'undefined') {
       listTodos = [];
     }
-    console.log('test');  
-    console.log(listTodos);
     return (
         <div>
         {
@@ -61,7 +57,9 @@ class SavedTodoListContainer extends Component {
                   }
               />
               <TodoContainer 
-                visibleTodos = { getNewTodos(visibleTodos, list.id) }
+                todos = { todos }
+                id = { list.id }
+                visibilityFilter = { list.visibilityFilter }
                 key= { 1 }
               ></TodoContainer>
               <div 
@@ -136,17 +134,20 @@ class SavedTodoListContainer extends Component {
                   >
                   <FilterLink
                     visibilityFilter="SHOW_ALL"
-                    currentVisibilityFilter = { visibilityFilter }
+                    currentVisibilityFilter = { list.visibilityFilter }
+                    idList = { list.id }
                     >ALL</FilterLink>
                     {' '}
                     <FilterLink
                     visibilityFilter="SHOW_COMPLETED"
-                    currentVisibilityFilter = { visibilityFilter }
+                    currentVisibilityFilter = { list.visibilityFilter }
+                    idList = { list.id }
                     >Completed</FilterLink>
                     {' '}
                     <FilterLink
                     visibilityFilter="SHOW_ACTIVE"
-                    currentVisibilityFilter = { visibilityFilter }
+                    currentVisibilityFilter = { list.visibilityFilter }
+                    idList = { list.id }
                     >ACTIVE</FilterLink>        
                   </div>
                 </div>
@@ -163,8 +164,8 @@ class SavedTodoListContainer extends Component {
 class TodoContainer extends Component {
 
   render() {
-  let {visibleTodos} = this.props;
-
+  let { todos, id, visibilityFilter } = this.props;
+  let visibleTodos = getVisibleTodos(getNewTodos(todos, id), visibilityFilter);
   return (
     <div 
       class= { 'main-container' }
@@ -273,7 +274,7 @@ class ColorContainer extends Component {
   }
 }
 
-const FilterLink = ({visibilityFilter, currentVisibilityFilter,children}) => {
+const FilterLink = ({visibilityFilter, currentVisibilityFilter,children, idList}) => {
   if (visibilityFilter === currentVisibilityFilter) {
   return <strong> { children } </strong>;
   }
@@ -285,7 +286,10 @@ const FilterLink = ({visibilityFilter, currentVisibilityFilter,children}) => {
         e.preventDefault();
         store.dispatch({
           type: 'SET_VISIBILITY_FILTER',
-          payload: { visibilityFilter }
+          payload: { 
+            idList,
+            visibilityFilter
+          }
         });
       }
     }
@@ -296,7 +300,6 @@ const FilterLink = ({visibilityFilter, currentVisibilityFilter,children}) => {
 
 
 const getVisibleTodos = (todos, visibilityFilter) => {
-  
   switch(visibilityFilter) {
     case 'SHOW_ALL': 
       return todos;
@@ -304,19 +307,20 @@ const getVisibleTodos = (todos, visibilityFilter) => {
       return todos.filter(t => t.completed);
     case 'SHOW_ACTIVE':
       return todos.filter(t => !t.completed);
+    default:
+      return todos;
   }
 }
 
-const getNewTodos = (visibleTodos, idList)  => {
-  return visibleTodos.filter(v => v.idList === idList);
+const getNewTodos = (todos, idList)  => {
+  return todos.filter(v => v.idList === idList);
 }
 
 
 class TodoListContainer extends Component {
   render() {
   
-  let {todos, visibleTodos, visibilityFilter, listTodo } = this.props;
-  
+  let {todos, listTodo } = this.props;
   return (
     <div 
       ref = { 'color_list' }
@@ -395,7 +399,9 @@ class TodoListContainer extends Component {
        
       </div>
       <TodoContainer 
-        visibleTodos = { getNewTodos(visibleTodos, idLists) }
+        todos = { todos }
+        id = { idLists }
+        visibilityFilter = { listTodo.visibilityFilter }
         key= { 1 }
         ></TodoContainer>
       <button
@@ -409,11 +415,9 @@ class TodoListContainer extends Component {
                 id: idLists++,
                 color: this.refs.color_list.style.backgroundColor,
                 title: this.refs.todo_title.value,
-                todos: visibleTodos.map(t => t.id)
+                todos: todos.map(t => t.id)
               }
             });
-            console.log('visibleTodos');
-            console.log(visibleTodos);
              
             this.refs.color_list.style.backgroundColor = '';
             this.refs.todo_title.value = '';
@@ -436,8 +440,7 @@ class TodosApp extends Component {
 
   render() {
 
-  let { todos, visibilityFilter, listTodos } = this.props;
-  let visibleTodos = getVisibleTodos(todos, visibilityFilter);
+  let { todos, listTodos } = this.props;
   let visibleListTodos = listTodos.filter(l => l.archived === false);
   return (
     <div class="main-container">
@@ -446,15 +449,13 @@ class TodosApp extends Component {
         <a href="#" class="logo" title="GMRUI"></a>
       </div>
       <TodoListContainer
-        visibleTodos = { visibleTodos }
-        visibilityFilter = { visibilityFilter }
         todos = { todos }
         listTodo = { visibleListTodos }
       >
       </TodoListContainer>
       <SavedTodoListContainer
         listTodos = { visibleListTodos }
-        visibleTodos = { visibleTodos }
+        todos = { todos }
       >
       </SavedTodoListContainer>
     </div>
