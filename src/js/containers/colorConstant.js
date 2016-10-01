@@ -1,5 +1,5 @@
 
-const colors = [
+const colorConstant = [
   {
     class: 'circle-black',
     div_color: '#263238'
@@ -20,4 +20,4 @@ const colors = [
 
 
 
-export { colors };
+export { colorConstant };

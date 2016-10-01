@@ -9,7 +9,7 @@ import '../styles/index.scss';
 
 
 import { todos } from './reducers/todos';
-import { colors } from './containers/colors';
+import { colorConstant } from './containers/colorConstant';
 import { listTodos } from './reducers/listTodos';
 import { listNotes } from './reducers/notes';
 
@@ -30,6 +30,7 @@ const saveState = (state) => {
     localStorage.setItem('state', JSON.stringify(state));
   }
   catch(err){
+    console.log(err);
     // Log
   }
 }
@@ -40,7 +41,7 @@ const todoApp = combineReducers({
   listNotes
 });
 
-const store = createStore(todoApp);
+const store = createStore(todoApp, loadState());
 
 class SavedTodoListContainer extends Component {
   render() {
@@ -94,24 +95,24 @@ class SavedTodoListContainer extends Component {
                   class = { 'glyphicon glyphicon-pencil cursor-edit' }
                   onClick = { 
                     () => {
-
-                      if (this.refs.color.className == 'hide-element') {
-                        this.refs.color.className = 'circle-container'
-                      }
-                      else {
-                        this.refs.color.className = 'hide-element'
-                      }
-                      }
+                      store.dispatch({
+                        type: 'SHOW_COLORS',
+                        payload: {
+                          id: list.id
+                        }
+                      })
                     }
+                  }
                 ></i>
                 <div 
-                  ref = { 'color' }
-                  class = {
-                    'hide-element'
+                 style = {
+                    {
+                      display: list.show_color ? '': 'none'
+                    }
                   }
+                  class = { 'circle-container' }
                   >
                  <ColorContainer
-                   refs = { this.refs }
                    listTodo = { list }
                  >
                  </ColorContainer>
@@ -191,8 +192,6 @@ class TodoContainer extends Component {
   render() {
   let { todos, listTodo, visibilityFilter } = this.props;
   let visibleTodos = getVisibleTodos(getNewTodos(todos, listTodo), visibilityFilter);
-  console.log('visibleTods');
-  console.log(visibleTodos);
   return (
     <div 
       class= { 'main-container' }
@@ -271,12 +270,12 @@ class TodoContainer extends Component {
 
 class ColorContainer extends Component {
   render () {
-    let { refs, listTodo } = this.props;
+    let { listTodo } = this.props;
 
     return (
       <div>
       {
-      colors.map(
+      colorConstant.map(
         (color, i) => 
           <div
             key = { i }
@@ -402,15 +401,14 @@ class TodoListContainer extends Component {
           class = { 'glyphicon glyphicon-pencil cursor' }
           onClick = { 
             () => {
-
-              if (this.refs.color.className == 'hide-element') {
-                this.refs.color.className = 'circle-container'
-              }
-              else {
-                this.refs.color.className = 'hide-element'
-              }
-              }
+              store.dispatch({
+                type: 'SHOW_COLORS',
+                payload: {
+                  id: listTodo.id
+                }
+              })
             }
+          }
         ></i>
         <i 
           class = { 'glyphicon glyphicon-tasks cursor' }
@@ -419,13 +417,14 @@ class TodoListContainer extends Component {
           class = { 'fa fa-sticky-note cursor' }
         ></i>
         <div 
-        ref = { 'color' }
-        class = {
-          'hide-element'
+        style = {
+          {
+            display: listTodo.show_color ? '': 'none'
+          }
         }
+        class = { 'circle-container' }
         >
          <ColorContainer
-           refs = { this.refs }
            listTodo = { listTodo }
          >
          </ColorContainer>
@@ -506,6 +505,7 @@ class TodosApp extends Component {
 
 const render = () => {
   console.log(store.getState());
+  saveState(store.getState());
   ReactDOM.render(
     <TodosApp
       { ...store.getState() }

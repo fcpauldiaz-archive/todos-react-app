@@ -1,10 +1,12 @@
 import { visibilityFilter } from './visibility';
+import { colors } from './colors';
 const listTodo = (state = {}, action ) => {
   switch(action.type) {
     case 'ADD_LIST_TODO':
       return {
         ...action.payload,
         archived: false,
+        show_color: false,
         creation_date: new Date()
       };    
     case 'EDIT_LIST_TODO':
@@ -30,6 +32,13 @@ const listTodo = (state = {}, action ) => {
           archived: true
         }
       }
+    case 'SHOW_COLORS':
+      if (state.id === action.payload.id) {
+        return {
+          ...state,
+          show_color: colors(state.show_color, action)
+        }
+      }
     case 'SET_VISIBILITY_FILTER':
     if (state.id === action.payload.idList) {
       return {
@@ -53,6 +62,8 @@ const listTodos = (state = [], action) => {
     case 'EDIT_LIST_TODO':
       return state.map(l => listTodo(l, action));
     case 'CHANGE_COLOR_LIST_TODO':
+      return state.map(l => listTodo(l, action));
+    case 'SHOW_COLORS':
       return state.map(l => listTodo(l, action));
     case 'DELETE_LIST_TODO':
       return state.filter(l => l.id !== action.payload.id);
