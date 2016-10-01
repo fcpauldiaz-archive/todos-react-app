@@ -4,14 +4,16 @@ const listTodo = (state = {}, action ) => {
     case 'ADD_LIST_TODO':
       return {
         ...action.payload,
-        archived: false
+        archived: false,
+        creation_date: new Date()
       };    
     case 'EDIT_LIST_TODO':
       console.log(state.id, action.payload.id);
       if (state.id === action.payload.id) {
       return {
         ...state,
-        title: action.payload.title
+        title: action.payload.title,
+        modification_date: new Date()
       }
     }
     case 'CHANGE_COLOR_LIST_TODO':

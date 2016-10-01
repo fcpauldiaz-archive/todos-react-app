@@ -8,6 +8,10 @@ $green: #0f9d58;
 $red: #e74c3c;
 $darker-red: #c0392b;
 $blue:  #4285f4;
+$circle-blue: #283593;
+$circle-red: #DD2C00;
+$circle-orange: #FF5722;
+$circle-black: #263238;
 
 body {
   background: $ligth-grey;
@@ -70,28 +74,28 @@ body {
 }
 
 .circle-black {
-  @include circle(20px, black);
+  @include circle(20px, $circle-black);
   right: $offset-circle - 20px;
  
 }
 
 $offset-circle: $offset-circle - 20px;
 .circle-blue {
-  @include circle(20px, blue);
+  @include circle(20px, $circle-blue);
   right: $offset-circle - 20px;
   
 }
 
 $offset-circle: $offset-circle - 20px;
 .circle-red {
-  @include circle(20px, red);
+  @include circle(20px, $circle-red);
   right: $offset-circle - 20px;
   
 }
 
 $offset-circle: $offset-circle - 20px;
 .circle-orange {
-  @include circle(20px, orange);
+  @include circle(20px, $circle-orange);
   right: $offset-circle - 20px;
 }
 

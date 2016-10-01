@@ -3,7 +3,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import deepFreeze from 'deep-freeze';
 import expect from 'expect';
+import { Provider, connect } from 'react-redux';
+import v4 from 'uuid-v4';
 import '../styles/index.scss';
+
 
 import { todos } from './reducers/todos';
 import { colors } from './containers/colors';
@@ -11,6 +14,25 @@ import { listTodos } from './reducers/listTodos';
 import { listNotes } from './reducers/notes';
 
 const { Component } = React;
+
+const loadState = () => {
+  try{
+    let result = JSON.parse(localStorage.getItem('state'));
+    return result ? result : undefined;
+  }
+  catch(err){
+    return undefined;
+  }
+}
+
+const saveState = (state) => {
+  try{
+    localStorage.setItem('state', JSON.stringify(state));
+  }
+  catch(err){
+    // Log
+  }
+}
 
 const todoApp = combineReducers({
   todos,
@@ -22,10 +44,13 @@ const store = createStore(todoApp);
 
 class SavedTodoListContainer extends Component {
   render() {
-    let { todos, listTodos, } = this.props;
+    let { todos, listTodos } = this.props;
     if (typeof listTodos === 'undefined') {
       listTodos = [];
     }
+    console.log('asdf');
+    console.log(todos);
+    console.log(listTodos);
     return (
         <div>
         {
@@ -58,7 +83,7 @@ class SavedTodoListContainer extends Component {
               />
               <TodoContainer 
                 todos = { todos }
-                id = { list.id }
+                listTodo = { list }
                 visibilityFilter = { list.visibilityFilter }
                 key= { 1 }
               ></TodoContainer>
@@ -164,8 +189,10 @@ class SavedTodoListContainer extends Component {
 class TodoContainer extends Component {
 
   render() {
-  let { todos, id, visibilityFilter } = this.props;
-  let visibleTodos = getVisibleTodos(getNewTodos(todos, id), visibilityFilter);
+  let { todos, listTodo, visibilityFilter } = this.props;
+  let visibleTodos = getVisibleTodos(getNewTodos(todos, listTodo), visibilityFilter);
+  console.log('visibleTods');
+  console.log(visibleTodos);
   return (
     <div 
       class= { 'main-container' }
@@ -312,10 +339,18 @@ const getVisibleTodos = (todos, visibilityFilter) => {
   }
 }
 
-const getNewTodos = (todos, idList)  => {
-  return todos.filter(v => v.idList === idList);
+const getUnSaved = (todos) => {
+  return todos.filter(t => t.saved === false);
 }
 
+const getNewTodos = (todos, listTodo)  => {
+  console.log('l', listTodo)
+  if (typeof listTodo.todos !== 'undefined') {
+    return listTodo.todos.map((idList) => todos.filter(v => v.id === idList)[0]).filter(f => f !== undefined);
+
+  }
+  return todos;
+}
 
 class TodoListContainer extends Component {
   render() {
@@ -346,9 +381,8 @@ class TodoListContainer extends Component {
             store.dispatch({
               type: 'ADD_TODO',
               payload: {
-                id: maxId++,
+                id: v4(),
                 text: this.input.value,
-                idList: idLists
               }
             });
 
@@ -399,8 +433,8 @@ class TodoListContainer extends Component {
        
       </div>
       <TodoContainer 
-        todos = { todos }
-        id = { idLists }
+        todos = { getUnSaved(todos) }
+        listTodo = { listTodo }
         visibilityFilter = { listTodo.visibilityFilter }
         key= { 1 }
         ></TodoContainer>
@@ -412,13 +446,20 @@ class TodoListContainer extends Component {
             store.dispatch({
               type: 'ADD_LIST_TODO',
               payload: {
-                id: idLists++,
+                id: v4(),
                 color: this.refs.color_list.style.backgroundColor,
                 title: this.refs.todo_title.value,
                 todos: todos.map(t => t.id)
               }
             });
-             
+            todos.map(t => {
+              store.dispatch({
+                type: 'SAVE_TODO',
+                payload: {
+                  id: t.id
+                }
+              })
+            });
             this.refs.color_list.style.backgroundColor = '';
             this.refs.todo_title.value = '';
             
@@ -433,8 +474,6 @@ class TodoListContainer extends Component {
 
 
 
-let maxId = 0;
-let idLists = 0;
 
 class TodosApp extends Component {
 

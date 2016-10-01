@@ -4,6 +4,7 @@ const todo = (state = {}, action) => {
       return {
         ...action.payload,
         completed: false,
+        saved: false
       };
     case 'TOGGLE_TODO':
       if(state.id === action.payload.id){
