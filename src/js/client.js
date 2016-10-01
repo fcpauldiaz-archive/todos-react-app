@@ -323,7 +323,19 @@ const FilterLink = ({visibilityFilter, currentVisibilityFilter,children, idList}
   { children } </a>
 }
 
-
+const getTodosInList = (todos, listTodo) => {
+  console.log(listTodo);
+  console.log('alksjdfljaldsf');
+  if (listTodo.length === 0) {
+    return todos;
+  }
+  //let returnValue = listTodo.map((l) => todos.filter(todo => l.todos.indexOf(todo.id) === -1))
+  let array = [];
+  for (let todos of listTodo) { array = array.concat(todos.todos) }
+  let returnValue = todos.filter(t => !array.includes(t.id));
+  console.log(returnValue);
+  return returnValue;
+}
 
 const getVisibleTodos = (todos, visibilityFilter) => {
   switch(visibilityFilter) {
@@ -343,10 +355,8 @@ const getUnSaved = (todos) => {
 }
 
 const getNewTodos = (todos, listTodo)  => {
-  console.log('l', listTodo)
   if (typeof listTodo.todos !== 'undefined') {
     return listTodo.todos.map((idList) => todos.filter(v => v.id === idList)[0]).filter(f => f !== undefined);
-
   }
   return todos;
 }
@@ -442,13 +452,14 @@ class TodoListContainer extends Component {
         class={ 'hide-element' }
         onClick={
           () => { 
+            
             store.dispatch({
               type: 'ADD_LIST_TODO',
               payload: {
                 id: v4(),
                 color: this.refs.color_list.style.backgroundColor,
                 title: this.refs.todo_title.value,
-                todos: todos.map(t => t.id)
+                todos: getTodosInList(todos, listTodo).map(t => t.id)
               }
             });
             todos.map(t => {
