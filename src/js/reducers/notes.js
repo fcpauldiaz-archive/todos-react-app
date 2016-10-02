@@ -8,15 +8,14 @@ const note = (state = {}, action ) => {
         ...action.payload,
         saved: false,
         archived: false,
-        show_color: false,
-        creation_date: new Date()
+        show_color: false
       };
     case 'EDIT_NOTE_TITLE':
       if (state.id === action.payload.id) {
         return {
           ...state,
           title: action.payload.title,
-          modification_date: new Date()
+          modification_date: action.payload.modification_date
         }
       }
     case 'EDIT_NOTE_CONTENT':
@@ -24,21 +23,23 @@ const note = (state = {}, action ) => {
         return {
           ...state,
           content: action.payload.content,
-          modification_date: new Date()
+          modification_date: action.payload.modification_date
         }
       }
      case 'CHANGE_COLOR_NOTE':
       if (state.id === action.payload.id) {
         return {
           ...state,
-          color: action.payload.color
+          color: action.payload.color,
+          modification_date: action.payload.modification_date
         }
       }
      case 'ARCHIVE_NOTE':
       if (state.id === action.payload.id) {
         return {
           ...state,
-          archived: true
+          archived: true,
+          modification_date: action.payload.modification_date
         }
       }
     case 'SHOW_COLOR_NOTE':

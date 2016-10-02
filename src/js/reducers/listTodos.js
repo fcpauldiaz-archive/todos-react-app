@@ -6,8 +6,7 @@ const listTodo = (state = {}, action ) => {
       return {
         ...action.payload,
         archived: false,
-        show_color: false,
-        creation_date: new Date()
+        show_color: false
       };    
     case 'EDIT_LIST_TODO':
       if (state.id === action.payload.id) {
@@ -15,21 +14,23 @@ const listTodo = (state = {}, action ) => {
         return {
           ...state,
           title: action.payload.title,
-          modification_date: new Date()
+          modification_date: action.payload.modification_date
         }
       }
     case 'CHANGE_COLOR_LIST_TODO':
       if (state.id === action.payload.id) {
         return {
           ...state,
-          color: action.payload.color
+          color: action.payload.color,
+          modification_date: action.payload.modification_date
         }
       }
     case 'ARCHIVE_LIST_TODO':
       if (state.id === action.payload.id) {
         return {
           ...state,
-          archived: true
+          archived: true,
+          modification_date: action.payload.modification_date
         }
       }
     case 'SHOW_COLORS':

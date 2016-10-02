@@ -1,8 +1,6 @@
 import { createStore, combineReducers } from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import deepFreeze from 'deep-freeze';
-import expect from 'expect';
 import { Provider, connect } from 'react-redux';
 import v4 from 'uuid-v4';
 import '../styles/index.scss';
@@ -14,6 +12,9 @@ import { listTodos } from './reducers/listTodos';
 import { listNotes } from './reducers/notes';
 import { visibilityApp } from './reducers/visibilityApp';
 const { Component } = React;
+import {} from './tests/todos.spec';
+import {} from './tests/notes.spec';
+import {} from './tests/listTodos.spec';
 
 const loadState = () => {
   try{
@@ -68,7 +69,8 @@ class NoteListContainer extends Component {
                     id: v4(),
                     title: this.refs.note_title.value,
                     content: this.refs.note_content.value,
-                    saved: true
+                    saved: true,
+                    creation_date: new Date()
                   }
                 })
                 this.refs.note_title.value = '';
@@ -98,7 +100,8 @@ class NoteListContainer extends Component {
                     id: v4(),
                     title: this.refs.note_title.value,
                     content: this.refs.note_content.value,
-                    saved: true
+                    saved: true,
+                    creation_date: new Date()
                   }
                 })
                 this.refs.note_title.value = '';
@@ -190,7 +193,8 @@ class SavedNoteContainer extends Component {
                         type: 'EDIT_NOTE_TITLE',
                         payload: {
                           id: note.id,
-                          title: e.target.value
+                          title: e.target.value,
+                          modification_date: new Date()
                         }
                       });
                     }
@@ -208,7 +212,8 @@ class SavedNoteContainer extends Component {
                         type: 'EDIT_NOTE_CONTENT',
                         payload: {
                           id: note.id,
-                          content: e.target.value
+                          content: e.target.value,
+                          modification_date: new Date()
                         }
                       });
                     }
@@ -248,7 +253,8 @@ class SavedNoteContainer extends Component {
                       store.dispatch({
                         type: 'ARCHIVE_NOTE',
                         payload: {
-                          id: note.id
+                          id: note.id,
+                          modification_date: new Date()
                         }
                       });
                     }
@@ -324,7 +330,8 @@ class SavedTodoListContainer extends Component {
                       type: 'EDIT_LIST_TODO',
                       payload: {
                         id: list.id,
-                        title: e.target.value
+                        title: e.target.value,
+                        modification_date: new Date()
                       }
                     });
                   }
@@ -372,13 +379,17 @@ class SavedTodoListContainer extends Component {
                       store.dispatch({
                         type: 'ARCHIVE_LIST_TODO',
                         payload: {
-                          id: list.id
+                          id: list.id,
+                          modification_date: new Date()
                         }
                       });
                       list.todos.map(id =>
                         store.dispatch({
                           type: 'ARCHIVE_TODO',
-                          payload: { id }
+                          payload: { 
+                            id,
+                            modification_date: new Date()
+                          }
                         })
                       );
                     }
@@ -476,7 +487,8 @@ class TodoContainer extends Component {
               store.dispatch({
                 type: 'TOGGLE_TODO',
                 payload: {
-                  id: todo.id
+                  id: todo.id,
+                  modification_date: new Date()
                 }
               });
             }
@@ -500,7 +512,8 @@ class TodoContainer extends Component {
                   type: 'EDIT_TODO',
                   payload: {
                     text: e.target.value,
-                    id: todo.id
+                    id: todo.id,
+                    modification_date: new Date()
                   }
                 })
               }
@@ -553,7 +566,8 @@ class ColorContainer extends Component {
                     type: 'CHANGE_COLOR_NOTE',
                     payload: {
                       id: note.id,
-                      color: color.div_color
+                      color: color.div_color,
+                      modification_date: new Date()
                     }
                   })
                 }
@@ -562,7 +576,8 @@ class ColorContainer extends Component {
                     type: 'CHANGE_COLOR_LIST_TODO',
                     payload: {
                       id: listTodo.id,
-                      color: color.div_color
+                      color: color.div_color,
+                      modification_date: new Date()
                     }
                   })
                 }
@@ -642,7 +657,7 @@ const getUnArchived = (todos) => {
 const getSearchFilter = (listTodos, search) => {
   
   if (search !== '') {
-    console.log(listTodos.filter(listTodo => listTodo.title.includes(search)))
+    
     return listTodos.filter(listTodo => listTodo.title.includes(search));
   }
   return listTodos; 
@@ -678,7 +693,8 @@ class TodoListContainer extends Component {
               payload: {
                 id: v4(),
                 title: e.target.value,
-                todos: getTodosInList(getUnArchived(todos), listTodo).map(t => t.id)
+                todos: getTodosInList(getUnArchived(todos), listTodo).map(t => t.id),
+                creation_date: new Date()
               }
             });
             todos.map(t => {
@@ -710,6 +726,7 @@ class TodoListContainer extends Component {
               payload: {
                 id: v4(),
                 text: e.target.value,
+                creation_date: new Date()
               }
             });
 
