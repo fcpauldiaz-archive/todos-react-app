@@ -23,6 +23,7 @@ const todo = (state = {}, action) => {
       }
     case 'EDIT_TODO':
       if (state.id === action.payload.id){
+        console.log(action.payload.text)
         return {
           ...state,
           text: action.payload.text
