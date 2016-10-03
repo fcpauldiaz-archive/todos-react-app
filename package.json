@@ -1,7 +1,7 @@
 {
-  "name": "todo-react",
-  "version": "0.0.0",
-  "description": "",
+  "name": "todo-react-project",
+  "version": "1.0.0",
+  "description": "Project UVG todos and notes",
   "main": "webpack.config.js",
   "dependencies": {
     "babel-loader": "^6.2.0",
@@ -26,7 +26,10 @@
     "react": "^15.3.0",
     "react-bootstrap": "^0.30.3",
     "react-dom": "^15.3.0",
+    "react-keydown": "^1.6.2",
+    "react-redux": "^4.4.5",
     "redux": "^3.5.2",
+    "redux-undo": "^0.6.1",
     "sass-loader": "^4.0.0",
     "style-loader": "^0.13.1",
     "webpack": "^1.12.9",

@@ -1,9 +1,11 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider, connect } from 'react-redux';
 import v4 from 'uuid-v4';
 import '../styles/index.scss';
+import undoable from 'redux-undo';
+import { ActionCreators } from 'redux-undo';
 
 
 import { todos } from './reducers/todos';
@@ -15,6 +17,9 @@ const { Component } = React;
 import {} from './tests/todos.spec';
 import {} from './tests/notes.spec';
 import {} from './tests/listTodos.spec';
+
+
+
 
 const loadState = () => {
   try{
@@ -36,6 +41,28 @@ const saveState = (state) => {
   }
 }
 
+const logger = store => next => action => {
+  console.log('dispatching', action)
+  let result = next(action)
+  console.log('next state', store.getState())
+  return result
+}
+
+const crashReporter = store => next => action => {
+  try {
+    return next(action)
+  } catch (err) {
+    console.error('Caught an exception!', err)
+    Raven.captureException(err, {
+      extra: {
+        action,
+        state: store.getState()
+      }
+    })
+    throw err
+  }
+}
+
 const todoApp = combineReducers({
   todos,
   listTodos,
@@ -43,7 +70,7 @@ const todoApp = combineReducers({
   visibilityApp
 });
 
-const store = createStore(todoApp, loadState());
+const store = createStore(todoApp, loadState(),applyMiddleware(logger, crashReporter));
 
 
 class NoteListContainer extends Component {
@@ -809,6 +836,27 @@ class TodoListContainer extends Component {
   }
 }
 
+const Search = () => {
+   return ( 
+    <div class="search-bar">
+      <input 
+        type="search" 
+        class= { 'search' }
+        placeholder= { 'Search...'}
+        onChange = {
+          (e) => {
+            store.dispatch({
+              type: 'SET_SEARCH_FILTER',
+              payload: {
+                search: e.target.value
+              }
+            })
+          }
+        }
+        />
+    </div>
+  );
+}
 
 
 
@@ -820,24 +868,8 @@ class TodosApp extends Component {
   let visibleListTodos = listTodos.filter(l => l.archived === false);
   return (
     <div class="main-container">
-      <div class="search-bar">
-        <input 
-          type="search" 
-          class="search" 
-          placeholder="Search..."
-          ref = { node => this.input = node } 
-          onChange = {
-            () => {
-              store.dispatch({
-                type: 'SET_SEARCH_FILTER',
-                payload: {
-                  search: this.input.value
-                }
-              })
-            }
-          }
-          />
-      </div>
+      <Search>
+      </Search>
       <TodoListContainer
         todos = { todos }
         listTodo = { visibleListTodos }
@@ -868,7 +900,6 @@ class TodosApp extends Component {
 
 
 const render = () => {
-  console.log(store.getState());
   saveState(store.getState());
   ReactDOM.render(
     <TodosApp
