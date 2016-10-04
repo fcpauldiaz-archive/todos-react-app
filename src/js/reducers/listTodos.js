@@ -8,6 +8,16 @@ const listTodo = (state = {}, action ) => {
         archived: false,
         show_color: false
       };    
+    case 'ADD_NEW_TODOS':
+    if (state.id === action.payload.id) {
+      return {
+        ...state,
+        todos: [
+          ...state.todos,
+          action.payload.newId
+        ]
+      }
+    }
     case 'EDIT_LIST_TODO':
       if (state.id === action.payload.id) {
 
@@ -60,6 +70,8 @@ const listTodos = (state = [], action) => {
         ...state,
         listTodo(undefined, action)
       ];
+    case 'ADD_NEW_TODOS': 
+      return state.map(l => listTodo(l, action));
     case 'EDIT_LIST_TODO':
       return state.map(l => listTodo(l, action));
     case 'CHANGE_COLOR_LIST_TODO':

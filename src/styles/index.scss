@@ -12,6 +12,7 @@ $circle-blue: #283593;
 $circle-red: #DD2C00;
 $circle-orange: #FF5722;
 $circle-black: #263238;
+$main-size: 500px;
 
 body {
   background: $ligth-grey;
@@ -102,15 +103,13 @@ $offset-circle: $offset-circle - 20px;
 .cursor {
   cursor: pointer;
   padding-left: 10px;
-}
-.cursor-edit {
-  cursor: pointer;
-  float: right;
-  padding-left: 10px;
+  &.edit {
+    float: right;
+  }
 }
 
 .list-container {
-  width: 500px;
+  width: $main-size;
   padding: 20px;
   display: inline-block;
 }
@@ -120,7 +119,7 @@ $offset-circle: $offset-circle - 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 18px;
   height: 30px;
-  width: 380px;
+  width: $main-size - 120px;
 }
 
 .hide-element {
@@ -139,7 +138,7 @@ $offset-circle: $offset-circle - 20px;
   font-size: 18px;
   height: 40px;
   text-align: left;
-  width: 460px;
+  width: $main-size - 40px;
 }
 .edit-div {
   background-color: darken($ligth-grey, 15%);
@@ -149,7 +148,7 @@ $offset-circle: $offset-circle - 20px;
   padding-top: 3px;
   padding-right: 10px;
   text-align: left;
-  width: 460px;
+  width: $main-size - 40px;
 }
 
 .main-input {
@@ -157,8 +156,13 @@ $offset-circle: $offset-circle - 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 18px;
   height: 40px;
-  width: 360px;
+  width: $main-size - 140px;
+  &.edit {
+    width: $main-size - 40px;
+  }
 }
+
+
 
 .title-input-none {
   display: none;
@@ -169,7 +173,7 @@ $offset-circle: $offset-circle - 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 18px;
   height: 40px;
-  width: 460px;
+  width: $main-size - 40px;
 }
 
 .todo-completed {
@@ -180,8 +184,6 @@ $offset-circle: $offset-circle - 20px;
   padding-right: 10px;
 }
 
-.margin-top {
-}
 
 .margin-none {
   margin-top: none;

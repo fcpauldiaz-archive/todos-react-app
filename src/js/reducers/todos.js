@@ -7,6 +7,13 @@ const todo = (state = {}, action) => {
         saved: false,
         archived: false
       };
+    case 'ADD_TODO_TO_LIST':
+      return {
+        ...action.payload,
+        completed: false,
+        saved: true,
+        archived: false
+      };
     case 'TOGGLE_TODO':
       if(state.id === action.payload.id){
         return {
@@ -52,6 +59,12 @@ const todos = (state = [], action) => {
         ...state,
         todo(undefined, action)
       ];
+    case 'ADD_TODO_TO_LIST': {
+      return [
+        ...state,
+        todo(undefined, action)
+      ];
+    }
     case 'TOGGLE_TODO':
       return state.map(t => todo(t, action));
     case 'SAVE_TODO':

@@ -6,7 +6,7 @@ import v4 from 'uuid-v4';
 import '../styles/index.scss';
 import undoable from 'redux-undo';
 import { ActionCreators } from 'redux-undo';
-
+import { loadState, saveState, logger, crashReporter } from './helpFunctions/middleware';
 
 import { todos } from './reducers/todos';
 import { colorConstant } from './containers/colorConstant';
@@ -21,47 +21,7 @@ import {} from './tests/listTodos.spec';
 
 
 
-const loadState = () => {
-  try{
-    let result = JSON.parse(localStorage.getItem('state'));
-    return result ? result : undefined;
-  }
-  catch(err){
-    return undefined;
-  }
-}
 
-const saveState = (state) => {
-  try{
-    localStorage.setItem('state', JSON.stringify(state));
-  }
-  catch(err){
-    console.log(err);
-    // Log
-  }
-}
-
-const logger = store => next => action => {
-  console.log('dispatching', action)
-  let result = next(action)
-  console.log('next state', store.getState())
-  return result
-}
-
-const crashReporter = store => next => action => {
-  try {
-    return next(action)
-  } catch (err) {
-    console.error('Caught an exception!', err)
-    Raven.captureException(err, {
-      extra: {
-        action,
-        state: store.getState()
-      }
-    })
-    throw err
-  }
-}
 
 const todoApp = combineReducers({
   todos,
@@ -247,7 +207,7 @@ class SavedNoteContainer extends Component {
                   }
               />
                 <i 
-                  class = { 'glyphicon glyphicon-pencil cursor-edit' }
+                  class = { 'glyphicon glyphicon-pencil cursor edit' }
                   onClick = { 
                     () => {
                       store.dispatch({
@@ -364,6 +324,35 @@ class SavedTodoListContainer extends Component {
                   }
                 }
               />
+            <input 
+              class = { 'main-input edit' }
+              placeholder = { 'Pending todo: Enter to save' }
+              onKeyPress={
+                (e) => { 
+                  if (e.key === 'Enter') {
+                  let newId = v4();
+                  store.dispatch({
+                    type: 'ADD_TODO_TO_LIST',
+                    payload: {
+                      id: newId,
+                      text: e.target.value,
+                      creation_date: new Date()
+                    }
+                  })
+                  store.dispatch({
+                    type: 'ADD_NEW_TODOS',
+                    payload: {
+                      id: list.id,
+                      modification_date: new Date(),
+                      newId
+                    }
+                  });
+
+                  e.target.value = "";
+                  }
+                }
+               }
+              />
               <TodoContainer 
                 todos = { todos }
                 listTodo = { list }
@@ -374,7 +363,7 @@ class SavedTodoListContainer extends Component {
                 class= { 'edit-div' }
               >
                 <i 
-                  class = { 'glyphicon glyphicon-pencil cursor-edit' }
+                  class = { 'glyphicon glyphicon-pencil cursor edit' }
                   onClick = { 
                     () => {
                       store.dispatch({
