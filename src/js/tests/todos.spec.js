@@ -182,7 +182,7 @@ const testArchiveTodo = () => {
   ];
 
   const action = {
-    type: 'ARCHIVE_TODO',
+    type: 'TOGGLE_ARCHIVE_TODO',
     payload: {
       id: 1,
       modification_date: new Date()

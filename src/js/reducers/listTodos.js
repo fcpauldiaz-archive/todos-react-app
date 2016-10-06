@@ -35,11 +35,11 @@ const listTodo = (state = {}, action ) => {
           modification_date: action.payload.modification_date
         }
       }
-    case 'ARCHIVE_LIST_TODO':
+    case 'TOGGLE_ARCHIVE_LIST_TODO':
       if (state.id === action.payload.id) {
         return {
           ...state,
-          archived: true,
+          archived: !state.archived,
           modification_date: action.payload.modification_date
         }
       }
@@ -80,7 +80,7 @@ const listTodos = (state = [], action) => {
       return state.map(l => listTodo(l, action));
     case 'DELETE_LIST_TODO':
       return state.filter(l => l.id !== action.payload.id);
-    case 'ARCHIVE_LIST_TODO':
+    case 'TOGGLE_ARCHIVE_LIST_TODO':
       return state.map(l => listTodo(l, action));
     case 'SET_VISIBILITY_FILTER':
       return state.map(t => listTodo(t, action));

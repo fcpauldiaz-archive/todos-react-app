@@ -7,6 +7,21 @@ import '../styles/index.scss';
 import undoable from 'redux-undo';
 import { ActionCreators } from 'redux-undo';
 import { loadState, saveState, logger, crashReporter } from './helpFunctions/middleware';
+import {
+    editListTodo, addTodoToList,
+    addNewTodos, showColorsTodo,
+    archiveListTodo, archiveTodo,
+    deleteListTodo, deleteTodos,
+    changeColorListTodo, setVisibleFilter,
+    addListTodo, saveTodos
+  } from './actions/actionListTodos';
+
+import {
+    toggleTodo, editTodo,
+    deleteTodo, addTodo
+  } from './actions/actionTodos';
+import { FilterButtonsLink } from './containers/FilterButtonsContainer';
+import { setSearch } from './actions/actionSearch';
 
 import { todos } from './reducers/todos';
 import { colorConstant } from './containers/colorConstant';
@@ -36,7 +51,7 @@ const store = createStore(todoApp, loadState(),applyMiddleware(logger, crashRepo
 class NoteListContainer extends Component {
   render() {
     let { listNotes, visibilityApp } = this.props;
-    if (visibilityApp.app === 'SHOW_NOTES' || visibilityApp.app === 'SHOW_ALL') {
+    if (visibilityApp.app !== 'SHOW_TODOS') {
    
     return (
         <div 
@@ -50,16 +65,10 @@ class NoteListContainer extends Component {
           onKeyPress = {
             (e) => {
               if (e.key === 'Enter') {
-                store.dispatch({
-                  type: 'ADD_NOTE',
-                  payload: {
-                    id: v4(),
-                    title: this.refs.note_title.value,
-                    content: this.refs.note_content.value,
-                    saved: true,
-                    creation_date: new Date()
-                  }
-                })
+                store.dispatch(addNote(
+                  this.refs.note_title.value,
+                  this.refs.note_content.value
+                ))
                 this.refs.note_title.value = '';
                 this.refs.note_content.value = '';
               }
@@ -81,61 +90,17 @@ class NoteListContainer extends Component {
           onKeyPress = {
             (e) => {
               if (e.key === 'Enter') {
-                store.dispatch({
-                  type: 'ADD_NOTE',
-                  payload: {
-                    id: v4(),
-                    title: this.refs.note_title.value,
-                    content: this.refs.note_content.value,
-                    saved: true,
-                    creation_date: new Date()
-                  }
-                })
+                 store.dispatch(addNote(
+                  this.refs.note_title.value,
+                  this.refs.note_content.value
+                ));
                 this.refs.note_title.value = '';
                 this.refs.note_content.value = '';
               }
             }
           }
         />
-        <i 
-          class = { 'glyphicon glyphicon-th-large cursor' }
-          onClick = { 
-            () => {
-              store.dispatch({
-                type: 'SET_VISIBILITY_FILTER_APP',
-                payload: {
-                  app: 'SHOW_ALL'
-                }
-              })
-            }
-          }
-        ></i>
-        <i 
-          class = { 'glyphicon glyphicon-tasks cursor' }
-          onClick = {
-            () => {
-              store.dispatch({
-                type: 'SET_VISIBILITY_FILTER_APP',
-                payload: {
-                  app: 'SHOW_TODOS'
-                }
-              })
-            }
-          }
-        ></i>
-        <i 
-          class = { 'fa fa-sticky-note cursor' }
-          onClick = {
-            () => {
-              store.dispatch({
-                type: 'SET_VISIBILITY_FILTER_APP',
-                payload: {
-                  app: 'SHOW_NOTES'
-                }
-              })
-            }
-          }
-        ></i>
+
         <div 
         class = { 'circle-container' }
         >
@@ -151,10 +116,11 @@ class NoteListContainer extends Component {
 }
 
 
+
 class SavedNoteContainer extends Component {
   render() {
     let { listNotes, visibilityApp} = this.props;
-    if (visibilityApp.app === 'SHOW_NOTES' || visibilityApp.app === 'SHOW_ALL'){
+    if (visibilityApp.app !== 'SHOW_TODOS'){
       listNotes = getSearchFilterNotes(listNotes, visibilityApp.search);
       return (
         <div>
@@ -176,14 +142,7 @@ class SavedNoteContainer extends Component {
                 ref= { 'edit_note_title' }
                 onChange={
                     (e) => { 
-                      store.dispatch({
-                        type: 'EDIT_NOTE_TITLE',
-                        payload: {
-                          id: note.id,
-                          title: e.target.value,
-                          modification_date: new Date()
-                        }
-                      });
+                      store.dispatch(editNoteTitle(note.id, e.target.value));
                     }
                   }
               />
@@ -195,14 +154,7 @@ class SavedNoteContainer extends Component {
                 class={ 'title-input' }
                 onChange={
                     (e) => { 
-                      store.dispatch({
-                        type: 'EDIT_NOTE_CONTENT',
-                        payload: {
-                          id: note.id,
-                          content: e.target.value,
-                          modification_date: new Date()
-                        }
-                      });
+                      store.dispatch(editNoteContent(note.id, e.target.value));
                     }
                   }
               />
@@ -210,12 +162,7 @@ class SavedNoteContainer extends Component {
                   class = { 'glyphicon glyphicon-pencil cursor edit' }
                   onClick = { 
                     () => {
-                      store.dispatch({
-                        type: 'SHOW_COLOR_NOTE',
-                        payload: {
-                          id: note.id
-                        }
-                      })
+                      store.dispatch(showColorNote(note.id));
                     }
                   }
                 ></i>
@@ -237,30 +184,20 @@ class SavedNoteContainer extends Component {
                   class={ 'btn blue size' }
                   onClick={
                     () => { 
-                      store.dispatch({
-                        type: 'ARCHIVE_NOTE',
-                        payload: {
-                          id: note.id,
-                          modification_date: new Date()
-                        }
-                      });
+                      store.dispatch(archiveNote(note.id));
+                  
                     }
                   }
                 >  
                 <span 
-                  class= { 'glyphicon glyphicon-floppy-disk padding-right' }
+                  class= { 'glyphicon glyphicon-trash padding-right' }
                 >
                </span>Archive </button>
                 <button
                   class={ 'btn red size' }
                   onClick={
                     () => { 
-                      store.dispatch({
-                        type: 'DELETE_NOTE',
-                        payload: {
-                          id: note.id
-                        }
-                      });
+                      store.dispatch(deleteNote(note.id));
                      
                     }
                   }
@@ -292,7 +229,7 @@ class SavedTodoListContainer extends Component {
     if (typeof listTodos === 'undefined') {
       listTodos = [];
     }
-    if (visibilityApp.app === 'SHOW_TODOS' || visibilityApp.app === 'SHOW_ALL') {
+    if (visibilityApp.app !== 'SHOW_NOTES') {
     listTodos = getSearchFilter(listTodos, visibilityApp.search);
     return (
         <div>
@@ -313,14 +250,7 @@ class SavedTodoListContainer extends Component {
                 class={ 'title-input' }
                 onChange={
                   (e) => { 
-                    store.dispatch({
-                      type: 'EDIT_LIST_TODO',
-                      payload: {
-                        id: list.id,
-                        title: e.target.value,
-                        modification_date: new Date()
-                      }
-                    });
+                    store.dispatch(editListTodo(list.id, e.target.value));
                   }
                 }
               />
@@ -331,22 +261,9 @@ class SavedTodoListContainer extends Component {
                 (e) => { 
                   if (e.key === 'Enter') {
                   let newId = v4();
-                  store.dispatch({
-                    type: 'ADD_TODO_TO_LIST',
-                    payload: {
-                      id: newId,
-                      text: e.target.value,
-                      creation_date: new Date()
-                    }
-                  })
-                  store.dispatch({
-                    type: 'ADD_NEW_TODOS',
-                    payload: {
-                      id: list.id,
-                      modification_date: new Date(),
-                      newId
-                    }
-                  });
+                  console.log()
+                  store.dispatch(addTodoToList(newId, e.target.value));
+                  store.dispatch(addNewTodos(list.id, newId));
 
                   e.target.value = "";
                   }
@@ -366,12 +283,7 @@ class SavedTodoListContainer extends Component {
                   class = { 'glyphicon glyphicon-pencil cursor edit' }
                   onClick = { 
                     () => {
-                      store.dispatch({
-                        type: 'SHOW_COLORS',
-                        payload: {
-                          id: list.id
-                        }
-                      })
+                      store.dispatch(showColorsTodo(list.id));
                     }
                   }
                 ></i>
@@ -392,21 +304,10 @@ class SavedTodoListContainer extends Component {
                   class={ 'btn blue size' }
                   onClick={
                     () => { 
-                      store.dispatch({
-                        type: 'ARCHIVE_LIST_TODO',
-                        payload: {
-                          id: list.id,
-                          modification_date: new Date()
-                        }
-                      });
+                      store.dispatch(archiveListTodo(list.id));
+
                       list.todos.map(id =>
-                        store.dispatch({
-                          type: 'ARCHIVE_TODO',
-                          payload: { 
-                            id,
-                            modification_date: new Date()
-                          }
-                        })
+                        store.dispatch(archiveTodo(id))
                       );
                     }
                   }
@@ -419,25 +320,16 @@ class SavedTodoListContainer extends Component {
                   class={ 'btn red size' }
                   onClick={
                     () => { 
-                      store.dispatch({
-                        type: 'DELETE_LIST_TODO',
-                        payload: {
-                          id: list.id
-                        }
-                      });
+                      store.dispatch(deleteListTodo(list.id));
+                     
                       list.todos.map(id => 
-                        store.dispatch({
-                          type: 'DELETE_TODO',
-                          payload: {
-                            id
-                          }
-                        })
+                        store.dispatch(deleteTodos(id))
                       )
                     }
                   }
                 >
                 <span 
-                  class= { 'glyphicon glyphicon-floppy-remove padding-right' }
+                  class= { 'glyphicon glyphicon-trash padding-right' }
                 >
                </span>
                  Delete
@@ -500,13 +392,7 @@ class TodoContainer extends Component {
           class= { 'btn orange' }
           onClick={
             () => { 
-              store.dispatch({
-                type: 'TOGGLE_TODO',
-                payload: {
-                  id: todo.id,
-                  modification_date: new Date()
-                }
-              });
+              store.dispatch(toggleTodo(todo.id));
             }
           } 
         >
@@ -524,14 +410,7 @@ class TodoContainer extends Component {
             }
             onChange = {
               (e) => {
-                store.dispatch({
-                  type: 'EDIT_TODO',
-                  payload: {
-                    text: e.target.value,
-                    id: todo.id,
-                    modification_date: new Date()
-                  }
-                })
+                store.dispatch(editTodo(todo.id, e.target.value));
               }
             }
             key={ todo.id }
@@ -541,12 +420,7 @@ class TodoContainer extends Component {
           class= { 'btn red' }
           onClick={
             () => { 
-              store.dispatch({
-                type: 'DELETE_TODO',
-                payload: {
-                  id: todo.id
-                }
-              });
+              store.dispatch(deleteTodo(todo.id));
             }
           } 
         >
@@ -578,24 +452,10 @@ class ColorContainer extends Component {
             onClick = {
               () => {
                 if (current === 'NOTE' ){
-                  store.dispatch({
-                    type: 'CHANGE_COLOR_NOTE',
-                    payload: {
-                      id: note.id,
-                      color: color.div_color,
-                      modification_date: new Date()
-                    }
-                  })
+                  store.dispatch(changeColorNote(note.id, color.div_color));
                 }
                 else {
-                  store.dispatch({
-                    type: 'CHANGE_COLOR_LIST_TODO',
-                    payload: {
-                      id: listTodo.id,
-                      color: color.div_color,
-                      modification_date: new Date()
-                    }
-                  })
+                  store.dispatch(changeColorListTodo(listTodo.id, color.div_color));
                 }
               }
             }
@@ -618,13 +478,7 @@ const FilterLink = ({visibilityFilter, currentVisibilityFilter,children, idList}
     onClick={
       (e) => {
         e.preventDefault();
-        store.dispatch({
-          type: 'SET_VISIBILITY_FILTER',
-          payload: { 
-            idList,
-            visibilityFilter
-          }
-        });
+        store.dispatch(setVisibleFilter(idList,visibilityFilter));
       }
     }
     >
@@ -670,6 +524,10 @@ const getUnArchived = (todos) => {
   return todos.filter (t => t.archived === false);
 }
 
+const getUnArchivedNotes = (notes) => {
+  return notes.filter(n => n.archived === false);
+}
+
 const getSearchFilter = (listTodos, search) => {
   
   if (search !== '') {
@@ -685,41 +543,30 @@ const getSearchFilterNotes = (listNotes, search) => {
   return listNotes;
 }
 
-class TodoListContainer extends Component {
-  render() {
-  
-  let {todos, listTodo, visibilityApp } = this.props;
-  if (visibilityApp.app === 'SHOW_TODOS' || visibilityApp.app === 'SHOW_ALL') {
+let TodoListContainer = ({todos, listTodo, visibilityApp}) => {
+  console.log(this);
+  console.log(todos);
+  if (visibilityApp.app !== 'SHOW_NOTES') {
   return (
     <div 
-      ref = { 'color_list' }
+      
       class= { 'list-container' }
     >
       <input 
         placeholder={
           'Title: Enter to save'
         }
-        class={ 'title-input-none' }
-        ref= { "todo_title" }
+        class={ 'title-input' }
+       
         onKeyPress = {
           (e) => {
             if (e.key === 'Enter') {
-              store.dispatch({
-              type: 'ADD_LIST_TODO',
-              payload: {
-                id: v4(),
-                title: e.target.value,
-                todos: getTodosInList(getUnArchived(todos), listTodo).map(t => t.id),
-                creation_date: new Date()
-              }
-            });
+              store.dispatch(addListTodo(
+                e.target.value,
+                getTodosInList(getUnArchived(todos), listTodo).map(t => t.id)
+              ));
             todos.map(t => {
-              store.dispatch({
-                type: 'SAVE_TODO',
-                payload: {
-                  id: t.id
-                }
-              })
+              store.dispatch(saveTodos(t.id));
             });
             this.refs.color_list.style.backgroundColor = '';
             this.refs.todo_title.value = '';
@@ -737,14 +584,7 @@ class TodoListContainer extends Component {
           (e) => { 
             if (e.key === 'Enter') {
 
-            store.dispatch({
-              type: 'ADD_TODO',
-              payload: {
-                id: v4(),
-                text: e.target.value,
-                creation_date: new Date()
-              }
-            });
+            store.dispatch(addTodo(e.target.value));
 
             e.target.value = "";
             }
@@ -756,45 +596,8 @@ class TodoListContainer extends Component {
           }
          }
         />
-         <i 
-          class = { 'glyphicon glyphicon glyphicon-th-large cursor' }
-          onClick = { 
-            () => {
-              store.dispatch({
-                type: 'SET_VISIBILITY_FILTER_APP',
-                payload: {
-                  app: 'SHOW_ALL'
-                }
-              })
-            }
-          }
-        ></i>
-        <i 
-          class = { 'glyphicon glyphicon-tasks cursor' }
-          onClick = {
-            () => {
-              store.dispatch({
-                type: 'SET_VISIBILITY_FILTER_APP',
-                payload: {
-                  app: 'SHOW_TODOS'
-                }
-              })
-            }
-          }
-        ></i>
-        <i 
-          class = { 'fa fa-sticky-note cursor' }
-          onClick = {
-            () => {
-              store.dispatch({
-                type: 'SET_VISIBILITY_FILTER_APP',
-                payload: {
-                  app: 'SHOW_NOTES'
-                }
-              })
-            }
-          }
-        ></i>
+        <FilterButtonsLink>
+        </FilterButtonsLink>
         <div 
         style = {
           {
@@ -822,8 +625,9 @@ class TodoListContainer extends Component {
   } else {
     return (<div></div>);
   }
-  }
 }
+
+TodoListContainer = connect()(TodoListContainer);
 
 const Search = () => {
    return ( 
@@ -834,12 +638,7 @@ const Search = () => {
         placeholder= { 'Search...'}
         onChange = {
           (e) => {
-            store.dispatch({
-              type: 'SET_SEARCH_FILTER',
-              payload: {
-                search: e.target.value
-              }
-            })
+            store.dispatch(setSearch(e.target.value));
           }
         }
         />
@@ -849,12 +648,20 @@ const Search = () => {
 
 
 
+
 class TodosApp extends Component {
 
   render() {
 
-  let { todos, listTodos, listNotes, visibilityApp } = this.props;
-  let visibleListTodos = listTodos.filter(l => l.archived === false);
+  let {todos, listTodos, listNotes, visibilityApp } = store.getState();
+  console.log(todos);
+  let  visibleListTodos = listTodos.filter(l => l.archived === false);
+  let  visibleListNotes = getUnArchived(listNotes);
+  if (visibilityApp.app === 'SHOW_ARCHIVED' ) {
+    visibleListTodos = listTodos.filter(l => l.archived === true);
+    visibleListNotes = listNotes.filter(l => l.archived === true);
+  }
+ 
   return (
     <div class="main-container">
       <Search>
@@ -866,7 +673,7 @@ class TodosApp extends Component {
       >
       </TodoListContainer>
       <NoteListContainer
-       listNotes = { listNotes }
+       listNotes = { visibleListNotes }
        visibilityApp = { visibilityApp }
       > 
       </NoteListContainer>
@@ -877,7 +684,7 @@ class TodosApp extends Component {
       >
       </SavedTodoListContainer>
       <SavedNoteContainer
-        listNotes = { listNotes }
+        listNotes = { visibleListNotes }
         visibilityApp = { visibilityApp }
       >
       </SavedNoteContainer>
@@ -887,16 +694,13 @@ class TodosApp extends Component {
 }
 
 
+ReactDOM.render(
+  <Provider store={ store }>
+    <TodosApp />
+  </Provider>,
+  document.getElementById('root')
+);
 
-const render = () => {
+store.subscribe(() => {
   saveState(store.getState());
-  ReactDOM.render(
-    <TodosApp
-      { ...store.getState() }
-    />,
-    document.getElementById('root')
-  );
-};
-
-render();
-store.subscribe(render);
+});

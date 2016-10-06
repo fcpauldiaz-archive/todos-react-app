@@ -39,7 +39,7 @@ const todo = (state = {}, action) => {
           modification_date: action.payload.modification_date
         }
       }
-    case 'ARCHIVE_TODO':
+    case 'TOGGLE_ARCHIVE_TODO':
       if (state.id === action.payload.id) {
         return {
           ...state,
@@ -73,7 +73,7 @@ const todos = (state = [], action) => {
       return state.map(t => todo(t, action));
     case 'DELETE_TODO':
       return state.filter(t => t.id !== action.payload.id);
-    case 'ARCHIVE_TODO':
+    case 'TOGGLE_ARCHIVE_TODO':
       return state.map(t => todo(t,action));
     default:
       return state;

@@ -34,11 +34,11 @@ const note = (state = {}, action ) => {
           modification_date: action.payload.modification_date
         }
       }
-     case 'ARCHIVE_NOTE':
+     case 'TOGGLE_ARCHIVE_NOTE':
       if (state.id === action.payload.id) {
         return {
           ...state,
-          archived: true,
+          archived: !state.archived,
           modification_date: action.payload.modification_date
         }
       }
@@ -72,7 +72,7 @@ const listNotes = (state = [], action) => {
       return state.map(l => note(l, action));
     case 'DELETE_NOTE':
       return state.filter(l => l.id !== action.payload.id);
-    case 'ARCHIVE_NOTE':
+    case 'TOGGLE_ARCHIVE_NOTE':
       return state.map(l => note(l, action));
     case 'SET_VISIBILITY_FILTER_NOTE':
       return state.map(t => note(t, action));

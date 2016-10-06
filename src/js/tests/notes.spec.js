@@ -216,7 +216,7 @@ const testArchiveNote = () => {
     creation_date: date
   }];
   const action = {
-    type: 'ARCHIVE_NOTE',
+    type: 'TOGGLE_ARCHIVE_NOTE',
     payload: {
       id: 1,
       archived: true,
@@ -354,4 +354,3 @@ testShowColorNote();
 testDeleteNote();
 
 console.log("All notes tests passed!");
-export {  };

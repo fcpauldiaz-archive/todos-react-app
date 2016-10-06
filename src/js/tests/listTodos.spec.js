@@ -144,7 +144,7 @@ const testArchiveListTodo = () => {
     creation_date: date
   }];
   const action = {
-    type: 'ARCHIVE_LIST_TODO',
+    type: 'TOGGLE_ARCHIVE_LIST_TODO',
     payload: {
       id: 1,
       modification_date: date
