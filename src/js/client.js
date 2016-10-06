@@ -17,11 +17,17 @@ import {
   } from './actions/actionListTodos';
 
 import {
+  addNote, editNoteTitle,
+  editNoteContent, showColorNote,
+  archiveNote, deleteNote, changeColorNote
+} from './actions/actionNotes';
+
+import {
     toggleTodo, editTodo,
     deleteTodo, addTodo
   } from './actions/actionTodos';
-import { FilterButtonsLink } from './containers/FilterButtonsContainer';
-import { setSearch } from './actions/actionSearch';
+import { FilterButtons } from './components/FilterButtons';
+import { Search } from './components/Search';
 
 import { todos } from './reducers/todos';
 import { colorConstant } from './containers/colorConstant';
@@ -29,12 +35,18 @@ import { listTodos } from './reducers/listTodos';
 import { listNotes } from './reducers/notes';
 import { visibilityApp } from './reducers/visibilityApp';
 const { Component } = React;
+import { getTodosInList, getVisibleTodos, 
+    getUnSaved, getNewTodos, 
+    getUnArchived, getUnArchivedNotes,
+    getSearchFilter, getSearchFilterNotes
+  } from './helpFunctions/filterFunctions';
+
+import { NoteListContainer } from './containers/NoteListContainer';
+import { SavedNoteContainer } from './containers/SavedNoteListContainer';
+import { ColorContainer } from './containers/ColorContainer';
 import {} from './tests/todos.spec';
 import {} from './tests/notes.spec';
 import {} from './tests/listTodos.spec';
-
-
-
 
 
 
@@ -48,179 +60,6 @@ const todoApp = combineReducers({
 const store = createStore(todoApp, loadState(),applyMiddleware(logger, crashReporter));
 
 
-class NoteListContainer extends Component {
-  render() {
-    let { listNotes, visibilityApp } = this.props;
-    if (visibilityApp.app !== 'SHOW_TODOS') {
-   
-    return (
-        <div 
-          ref = { 'color_list' }
-          class= { 'list-container' }
-        >
-        <input
-          placeholder = { 'Title: Enter to Save' }
-          ref = { 'note_title' }
-          class = { 'title-input-none' }
-          onKeyPress = {
-            (e) => {
-              if (e.key === 'Enter') {
-                store.dispatch(addNote(
-                  this.refs.note_title.value,
-                  this.refs.note_content.value
-                ))
-                this.refs.note_title.value = '';
-                this.refs.note_content.value = '';
-              }
-            }
-          }
-        />
-       <div 
-        class= { 'main-div' }
-      >
-        <input
-          placeholder = { 'Note content: Enter to save' }
-          ref = { 'note_content' }
-          class= { 'main-input' }
-          onClick = {  
-            () => {
-              this.refs.note_title.className = 'title-input'
-            }
-          }
-          onKeyPress = {
-            (e) => {
-              if (e.key === 'Enter') {
-                 store.dispatch(addNote(
-                  this.refs.note_title.value,
-                  this.refs.note_content.value
-                ));
-                this.refs.note_title.value = '';
-                this.refs.note_content.value = '';
-              }
-            }
-          }
-        />
-
-        <div 
-        class = { 'circle-container' }
-        >
-        </div>
-       
-      </div>
-    </div>
-    );
-    } else {
-      return (<div></div>);
-    }
-  }
-}
-
-
-
-class SavedNoteContainer extends Component {
-  render() {
-    let { listNotes, visibilityApp} = this.props;
-    if (visibilityApp.app !== 'SHOW_TODOS'){
-      listNotes = getSearchFilterNotes(listNotes, visibilityApp.search);
-      return (
-        <div>
-        {
-          listNotes.map((note, i) =>
-             <div 
-              ref = { 'color_list' }
-              class= { 'list-container' }
-              style = {
-                {
-                  backgroundColor: note.color
-                }
-              }
-              key = { note.id }
-            >
-              <input 
-                defaultValue = { note.title }
-                class={ 'title-input' }
-                ref= { 'edit_note_title' }
-                onChange={
-                    (e) => { 
-                      store.dispatch(editNoteTitle(note.id, e.target.value));
-                    }
-                  }
-              />
-                <div 
-                class= { 'edit-div' }
-              >
-               <input 
-                defaultValue = { note.content }
-                class={ 'title-input' }
-                onChange={
-                    (e) => { 
-                      store.dispatch(editNoteContent(note.id, e.target.value));
-                    }
-                  }
-              />
-                <i 
-                  class = { 'glyphicon glyphicon-pencil cursor edit' }
-                  onClick = { 
-                    () => {
-                      store.dispatch(showColorNote(note.id));
-                    }
-                  }
-                ></i>
-                <div 
-                 style = {
-                    {
-                      display: note.show_color ? '': 'none'
-                    }
-                  }
-                  class = { 'circle-container' }
-                  >
-                 <ColorContainer
-                   note = { note }
-                   current = { 'NOTE' }
-                 >
-                 </ColorContainer>
-                 </div>
-                <button
-                  class={ 'btn blue size' }
-                  onClick={
-                    () => { 
-                      store.dispatch(archiveNote(note.id));
-                  
-                    }
-                  }
-                >  
-                <span 
-                  class= { 'glyphicon glyphicon-trash padding-right' }
-                >
-               </span>Archive </button>
-                <button
-                  class={ 'btn red size' }
-                  onClick={
-                    () => { 
-                      store.dispatch(deleteNote(note.id));
-                     
-                    }
-                  }
-                >
-                <span 
-                  class= { 'glyphicon glyphicon-floppy-remove padding-right' }
-                >
-               </span>
-                 Delete
-                </button>
-               
-                </div>
-              </div>
-          )
-        }
-        </div>
-      );
-    }
-    else {
-      return (<div></div>);
-    }
-  }
-}
 
 
 class SavedTodoListContainer extends Component {
@@ -297,6 +136,7 @@ class SavedTodoListContainer extends Component {
                   >
                  <ColorContainer
                    listTodo = { list }
+                   dispatch = { store.dispatch }
                  >
                  </ColorContainer>
                  </div>
@@ -437,36 +277,6 @@ class TodoContainer extends Component {
   }
 }
 
-class ColorContainer extends Component {
-  render () {
-    let { listTodo, note, current } = this.props;
-
-    return (
-      <div>
-      {
-      colorConstant.map(
-        (color, i) => 
-          <div
-            key = { i }
-            class = { color.class }
-            onClick = {
-              () => {
-                if (current === 'NOTE' ){
-                  store.dispatch(changeColorNote(note.id, color.div_color));
-                }
-                else {
-                  store.dispatch(changeColorListTodo(listTodo.id, color.div_color));
-                }
-              }
-            }
-          >
-          </div>
-      )
-      }
-      </div>
-    );
-  }
-}
 
 const FilterLink = ({visibilityFilter, currentVisibilityFilter,children, idList}) => {
   if (visibilityFilter === currentVisibilityFilter) {
@@ -485,79 +295,24 @@ const FilterLink = ({visibilityFilter, currentVisibilityFilter,children, idList}
   { children } </a>
 }
 
-const getTodosInList = (todos, listTodo) => {
-  if (listTodo.length === 0) {
-    return todos;
-  }
-  //let returnValue = listTodo.map((l) => todos.filter(todo => l.todos.indexOf(todo.id) === -1))
-  let array = [];
-  for (let todos of listTodo) { array = array.concat(todos.todos) }
-  let returnValue = todos.filter(t => !array.includes(t.id));
-  return returnValue;
-}
 
-const getVisibleTodos = (todos, visibilityFilter) => {
-  switch(visibilityFilter) {
-    case 'SHOW_ALL': 
-      return todos;
-    case 'SHOW_COMPLETED':
-      return todos.filter(t => t.completed);
-    case 'SHOW_ACTIVE':
-      return todos.filter(t => !t.completed);
-    default:
-      return todos;
-  }
-}
 
-const getUnSaved = (todos) => {
-  return todos.filter(t => t.saved === false);
-}
-
-const getNewTodos = (todos, listTodo)  => {
-  if (typeof listTodo.todos !== 'undefined') {
-    return listTodo.todos.map((idList) => todos.filter(v => v.id === idList)[0]).filter(f => f !== undefined);
-  }
-  return todos;
-}
-
-const getUnArchived = (todos) => {
-  return todos.filter (t => t.archived === false);
-}
-
-const getUnArchivedNotes = (notes) => {
-  return notes.filter(n => n.archived === false);
-}
-
-const getSearchFilter = (listTodos, search) => {
+class TodoListContainer extends Component {
+  render() {
   
-  if (search !== '') {
-    
-    return listTodos.filter(listTodo => listTodo.title.includes(search));
-  }
-  return listTodos; 
-}
-const getSearchFilterNotes = (listNotes, search) => {
-  if (search !== '') {
-    return listNotes.filter(note => note.title.includes(search));
-  }
-  return listNotes;
-}
-
-let TodoListContainer = ({todos, listTodo, visibilityApp}) => {
-  console.log(this);
-  console.log(todos);
+  let {todos, listTodo, visibilityApp } = this.props;
   if (visibilityApp.app !== 'SHOW_NOTES') {
   return (
     <div 
-      
+      ref = { 'color_list' }
       class= { 'list-container' }
     >
       <input 
         placeholder={
           'Title: Enter to save'
         }
-        class={ 'title-input' }
-       
+        class={ 'title-input-none' }
+        ref= { "todo_title" }
         onKeyPress = {
           (e) => {
             if (e.key === 'Enter') {
@@ -596,8 +351,10 @@ let TodoListContainer = ({todos, listTodo, visibilityApp}) => {
           }
          }
         />
-        <FilterButtonsLink>
-        </FilterButtonsLink>
+        <FilterButtons
+          dispatch = { store.dispatch }
+        >
+        </FilterButtons>
         <div 
         style = {
           {
@@ -625,25 +382,7 @@ let TodoListContainer = ({todos, listTodo, visibilityApp}) => {
   } else {
     return (<div></div>);
   }
-}
-
-TodoListContainer = connect()(TodoListContainer);
-
-const Search = () => {
-   return ( 
-    <div class="search-bar">
-      <input 
-        type="search" 
-        class= { 'search' }
-        placeholder= { 'Search...'}
-        onChange = {
-          (e) => {
-            store.dispatch(setSearch(e.target.value));
-          }
-        }
-        />
-    </div>
-  );
+  }
 }
 
 
@@ -653,8 +392,7 @@ class TodosApp extends Component {
 
   render() {
 
-  let {todos, listTodos, listNotes, visibilityApp } = store.getState();
-  console.log(todos);
+  let { todos, listTodos, listNotes, visibilityApp } = this.props;
   let  visibleListTodos = listTodos.filter(l => l.archived === false);
   let  visibleListNotes = getUnArchived(listNotes);
   if (visibilityApp.app === 'SHOW_ARCHIVED' ) {
@@ -664,7 +402,9 @@ class TodosApp extends Component {
  
   return (
     <div class="main-container">
-      <Search>
+      <Search
+        dispatch = { store.dispatch }
+      >
       </Search>
       <TodoListContainer
         todos = { todos }
@@ -675,6 +415,7 @@ class TodosApp extends Component {
       <NoteListContainer
        listNotes = { visibleListNotes }
        visibilityApp = { visibilityApp }
+       dispatch = { store.dispatch }
       > 
       </NoteListContainer>
       <SavedTodoListContainer
@@ -686,6 +427,7 @@ class TodosApp extends Component {
       <SavedNoteContainer
         listNotes = { visibleListNotes }
         visibilityApp = { visibilityApp }
+        dispatch = { store.dispatch }
       >
       </SavedNoteContainer>
     </div>
@@ -694,13 +436,16 @@ class TodosApp extends Component {
 }
 
 
-ReactDOM.render(
-  <Provider store={ store }>
-    <TodosApp />
-  </Provider>,
-  document.getElementById('root')
-);
 
-store.subscribe(() => {
+const render = () => {
   saveState(store.getState());
-});
+  ReactDOM.render(
+    <TodosApp
+      { ...store.getState() }
+    />,
+    document.getElementById('root')
+  );
+};
+
+render();
+store.subscribe(render);

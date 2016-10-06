@@ -1,7 +1,7 @@
 import React from 'react';
+import { setVisibleApp } from './../actions/actionNotes';
 
-export const FilterButtons = ({onShowAllClick, onShowTodosClick,
- onShowNotesClick, onShowArchivedClick}) => {
+export const FilterButtons = ({dispatch}) => {
   return (
     <div 
       style = {
@@ -14,8 +14,7 @@ export const FilterButtons = ({onShowAllClick, onShowTodosClick,
       class = { 'glyphicon glyphicon-th-large cursor toltip' }
       onClick = { 
         () => {
-          onShowAllClick
-          //store.dispatch(setVisibleApp('SHOW_ALL'));
+          dispatch(setVisibleApp('SHOW_ALL'));
         }
       }
     >
@@ -25,8 +24,7 @@ export const FilterButtons = ({onShowAllClick, onShowTodosClick,
       class = { 'glyphicon glyphicon-tasks cursor toltip' }
       onClick = {
         () => {
-          onShowTodosClick
-         //store.dispatch(setVisibleApp('SHOW_TODOS'));
+         dispatch(setVisibleApp('SHOW_TODOS'));
         }
       }
     >
@@ -36,8 +34,7 @@ export const FilterButtons = ({onShowAllClick, onShowTodosClick,
       class = { 'fa fa-sticky-note cursor toltip' }
       onClick = {
         () => {
-          onShowNotesClick
-         //store.dispatch(setVisibleApp('SHOW_NOTES'));
+         dispatch(setVisibleApp('SHOW_NOTES'));
         }
       }
     >          
@@ -47,8 +44,7 @@ export const FilterButtons = ({onShowAllClick, onShowTodosClick,
       class = { 'glyphicon glyphicon-folder-open cursor toltip' }
       onClick = {
         () => {
-          onShowArchivedClick
-          //store.dispatch(setVisibleApp('SHOW_ARCHIVED'))
+          dispatch(setVisibleApp('SHOW_ARCHIVED'))
         }
       }
     >
