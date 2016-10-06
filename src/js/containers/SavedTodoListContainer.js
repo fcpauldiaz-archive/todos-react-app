@@ -2,10 +2,10 @@ import React from 'react';
 import v4 from 'uuid-v4';
 const { Component } = React;
 import {
-  editListTod, addTodoToList,
+  editListTodo, addTodoToList,
   addNewTodos, showColorsTodo,
   archiveListTodo, archiveTodo, deleteListTodo,
-  deleteTodos
+  deleteTodos, addListTodo
 } from './../actions/actionListTodos';
 import { FilterButtons } from './../components/FilterButtons';
 import { getTodosInList, getVisibleTodos, 

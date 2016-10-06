@@ -2,7 +2,7 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider, connect } from 'react-redux';
-import v4 from 'uuid-v4';
+import keydown from 'react-keydown';
 import '../styles/index.scss';
 import undoable from 'redux-undo';
 import { ActionCreators } from 'redux-undo';
@@ -31,10 +31,10 @@ import {} from './tests/listTodos.spec';
 
 
 const todoApp = combineReducers({
-  todos,
-  listTodos,
-  listNotes,
-  visibilityApp
+  todos: undoable(todos),
+  listTodos: undoable(listTodos),
+  listNotes: undoable(listNotes),
+  visibilityApp: undoable(visibilityApp)
 });
 
 const store = createStore(todoApp, loadState(),applyMiddleware(logger, crashReporter));
@@ -43,9 +43,22 @@ const store = createStore(todoApp, loadState(),applyMiddleware(logger, crashRepo
 
 class TodosApp extends Component {
 
+  @keydown('ctrl+z' )
+  undo() {
+    store.dispatch(ActionCreators.undo());
+  }
+  @keydown('ctrl+y' )
+  redo() {
+    store.dispatch(ActionCreators.redo());
+  }
+
   render() {
 
   let { todos, listTodos, listNotes, visibilityApp } = this.props;
+  todos = todos.present;
+  listNotes = listNotes.present;
+  listTodos = listTodos.present;
+  visibilityApp = visibilityApp.present;
   let  visibleListTodos = listTodos.filter(l => l.archived === false);
   let  visibleListNotes = getUnArchived(listNotes);
   if (visibilityApp.app === 'SHOW_ARCHIVED' ) {

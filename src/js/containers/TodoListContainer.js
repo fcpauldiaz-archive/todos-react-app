@@ -1,10 +1,18 @@
 import React from 'react';
 const { Component } = React;
 import {
+  editListTodo, addTodoToList,
+  addNewTodos, showColorsTodo,
+  archiveListTodo, archiveTodo, 
+  deleteListTodo, deleteTodos,
+  addListTodo, saveTodos
+} from './../actions/actionListTodos';
+import {
   toggleTodo, editTodo,
   deleteTodo, addTodo,
 } from './../actions/actionTodos';
-import { getUnSaved } from './../helpFunctions/filterFunctions';
+
+import { getUnSaved, getTodosInList, getUnArchived } from './../helpFunctions/filterFunctions';
 import { FilterButtons } from './../components/FilterButtons';
 import { ColorContainer } from './ColorContainer';
 import { TodoContainer } from './TodoContainer';
