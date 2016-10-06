@@ -27,7 +27,7 @@ import { TodoListContainer } from './containers/TodoListContainer';
 import {} from './tests/todos.spec';
 import {} from './tests/notes.spec';
 import {} from './tests/listTodos.spec';
-
+import {} from './tests/visibilityApp.spec';
 
 
 const todoApp = combineReducers({
