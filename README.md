@@ -1,7 +1,16 @@
 # todo-react
-Example app with redux + react
+List of todos and List of Notes.
 
 #Usage
+CTRL + Z to Undo an action.
+
+CTRL + Y to Redo an action
+
+To create List of Notes Or Todos
+
+Press Enter in title input
+
+#Installation
 
 1. npm install
 
