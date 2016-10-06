@@ -1,16 +1,8 @@
 import React from 'react';
 const { Component } = React;
-import {
-  addNote, editNoteTitle,
-  editNoteContent, showColorNote,
-  archiveNote, deleteNote, changeColorNote
-} from './../actions/actionNotes';
+import { changeColorNote } from './../actions/actionNotes';
+import { changeColorListTodo } from './../actions/actionListTodos';
 import { FilterButtons } from './../components/FilterButtons';
-import { getTodosInList, getVisibleTodos, 
-    getUnSaved, getNewTodos, 
-    getUnArchived, getUnArchivedNotes,
-    getSearchFilter, getSearchFilterNotes
-  } from './../helpFunctions/filterFunctions';
 import { colorConstant } from './../containers/colorConstant';
 
 class ColorContainer extends Component {
